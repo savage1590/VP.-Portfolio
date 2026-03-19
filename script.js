@@ -390,19 +390,22 @@ modalContactBtn.addEventListener('click', closeModal);
 const portfolioData = [
     {
         id: 'pack-1',
-        title: { ua: 'Пакування для ювелірного бренду', en: 'Package for jewelry brand' },
+        title: { ua: 'Ювелірне пакування "TSATSKY"', en: '"TSATSKY" Jewelry Packaging' },
         category: 'pack',
         catName: { ua: 'Дизайн пакування', en: 'Packaging Design' },
         type: 'image',
         description: {
-            ua: 'Розробка сучасного дизайну пакування для енергетичного напою з використанням неонових акцентів.',
-            en: 'Modern packaging design development for an energy drink using neon accents.'
+            ua: 'Дизайн преміального голографічного пакування трикутної форми для Харківської ювелірної фабрики TSATSKY.',
+            en: 'Design of premium holographic triangular packaging for the Kharkiv jewelry factory TSATSKY.'
         },
-        preview: 'https://i.ibb.co/5xrFzKmT/Compress-Two-jewelry-boxes-202603182100.jpg', // ЗАМІНИТИ ПРЕВ'Ю ТУТ
-        images: [ // ЗАМІНИТИ ФОТО ДЛЯ МОДАЛКИ ТУТ
-            'https://i.ibb.co/ksCvwvXw/Surreal-CGI-of-202603182104.jpg',
-            'https://i.ibb.co/nqqp4Dr8/Two-triangular-packages-202603182104.jpg',
-            'https://i.ibb.co/pt4hxfb/Ultra-realistic-shot-of-202603182101.jpg'
+        preview: 'projects/jewelry package/Two_triangular_packages_202603191409.webp',
+        images: [
+            'projects/jewelry package/Two_triangular_packages_202603191409.webp',
+            'projects/jewelry package/Action-shot_CGI_of_202603191410.webp',
+            'projects/jewelry package/High-end_professional_product_202603191410 (1).webp',
+            'projects/jewelry package/Minimalist_jewelry_packaging_202603191410.webp',
+            'projects/jewelry package/Surreal_CGI_of_202603191410.webp',
+            'projects/jewelry package/Ultra-realistic_shot_of_202603191409.webp'
         ]
     },
     {
