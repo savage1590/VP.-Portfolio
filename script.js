@@ -447,17 +447,21 @@ const portfolioData = [
     },
     {
         id: 'large-banner-1',
-        title: { ua: 'Music Fest Billboard', en: 'Music Fest Billboard' },
+        title: { ua: 'Широкоформатний банер "Одеська"', en: 'Large Format Banner "Odeska"' },
         category: 'large-banner',
         catName: { ua: 'Широкоформатні банери', en: 'Large Format Banners' },
         type: 'image',
         description: {
-            ua: 'Дизайн білбордів для масштабного музичного фестивалю.',
-            en: 'Billboard design for a massive music festival.'
+            ua: 'Дизайн та реалістична 3D-візуалізація розміщення широкоформатного банера на фасаді будівлі.',
+            en: 'Design and realistic 3D visualization of a large-format banner placement on a building facade.'
         },
-        preview: 'https://via.placeholder.com/600x450/111115/00ff88?text=Billboard', // ЗАМІНИТИ ПРЕВ'Ю ТУТ
-        images: [ // ЗАМІНИТИ ФОТО ДЛЯ МОДАЛКИ ТУТ
-            'https://via.placeholder.com/1200x800/111115/00ff88?text=Billboard+Mockup'
+        preview: 'projects/big size banner 1/Баннер одесская.PSD).webp',
+        images: [
+            'projects/big size banner 1/Баннер одесская.PSD).webp',
+            'projects/big size banner 1/A_hyper-realistic_wide_202603192157.webp',
+            'projects/big size banner 1/A_professional_interior_202603192158.webp',
+            'projects/big size banner 1/A_realistic_low-angle_202603192205.webp',
+            'projects/big size banner 1/A_hyper-realistic_architectural_202603192205.webp'
         ]
     },
     {
