@@ -395,7 +395,7 @@ const portfolioData = [
         catName: { ua: 'Дизайн пакування', en: 'Packaging Design' },
         type: 'image',
         description: {
-            ua: 'Дизайн преміального голографічного пакування трикутної форми для Харківської ювелірної фабрики TSATSKY.',
+            ua: 'Дизайн пакування трикутної форми для компанії TSATSKY.',
             en: 'Design of premium holographic triangular packaging for the Kharkiv jewelry factory TSATSKY.'
         },
         preview: 'projects/jewelry package/Two_triangular_packages_202603191409.webp',
@@ -425,18 +425,24 @@ const portfolioData = [
     },
     {
         id: 'web-banner-1',
-        title: { ua: 'Стартап Промо', en: 'Startup Promo' },
+        title: { ua: 'Рекламні Digital банери для бренду "TSATSKY"', en: 'Digital Advertising Banners for "TSATSKY"' },
         category: 'web-banner',
         catName: { ua: 'Веб-банери', en: 'Web Banners' },
         type: 'image',
         description: {
-            ua: 'Серія анімованих та статичних банерів для реклами нового сервісу.',
-            en: 'A series of animated and static banners for a new service layout.'
+            ua: 'Серія акційних веб-банерів для реклами знижок на ювелірні прикраси.',
+            en: 'A series of promotional web banners for jewelry discounts.'
         },
-        preview: 'https://via.placeholder.com/600x450/111115/00ff88?text=Web+Banner', // ЗАМІНИТИ ПРЕВ'Ю ТУТ
-        images: [ // ЗАМІНИТИ ФОТО ДЛЯ МОДАЛКИ ТУТ
-            'https://via.placeholder.com/1200x800/111115/00ff88?text=Banner+Set+1',
-            'https://via.placeholder.com/1200x800/111115/00ff88?text=Banner+Set+2'
+        preview: 'projects/veb banners for TV/Реклама телевизоры баннера скидки-01.webp',
+        images: [
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-01.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-02.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-03.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-04.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-05.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-06.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-07.webp',
+            'projects/veb banners for TV/Реклама телевизоры баннера скидки-08.webp'
         ]
     },
     {
