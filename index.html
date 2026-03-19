@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Владислав Проценко | Graphic Designer & AI Creator</title>
+    <!-- Use Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Modern web font (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Geometric Noise Background -->
+    <div class="geometric-bg">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Custom Cursor Layers -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+
+    <header class="header">
+        <div class="container header-container">
+            <a href="#home" class="logo">V<span>P</span>.</a>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link" data-i18n="nav_home">Головна</a></li>
+                    <li><a href="#portfolio" class="nav-link" data-i18n="nav_portfolio">Портфоліо</a></li>
+                    <li><a href="#about" class="nav-link" data-i18n="nav_about">Про мене</a></li>
+                    <li><a href="#contacts" class="nav-link" data-i18n="nav_contacts">Контакти</a></li>
+                    <li class="lang-switcher">
+                        <button class="lang-btn active" data-lang="ua">UA</button>
+                        <span style="color:var(--color-text-muted); cursor:default">|</span>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="burger-menu" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-bg">
+                <div class="glow glow-1"></div>
+                <div class="glow glow-2"></div>
+            </div>
+
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title reveal-element" data-i18n="hero_title">Владислав Проценко</h1>
+                    <p class="hero-subtitle reveal-element delay-1"><span data-i18n="hero_subtitle">Graphic
+                            Designer</span> <span class="accent">&</span> <span data-i18n="hero_subtitle_2">AI
+                            Creator</span></p>
+                    <div class="hero-controls reveal-element delay-2">
+                        <a href="#portfolio" class="btn btn-primary" data-i18n="btn_work">Дивитись роботи</a>
+                        <a href="#contacts" class="btn btn-outline" data-i18n="btn_contact">Зв'язатися</a>
+                    </div>
+                </div>
+                <div class="hero-image reveal-element delay-2">
+                    <!-- 📸 ТУТ ВИ МОЖЕТЕ ВСТАВИТИ СВОЮ ФОТОГРАФІЮ -->
+                    <!-- ЗАМІНІТЬ src="..." НА ШЛЯХ ДО ВАШОГО ФОТО (НАПРИКЛАД: src="img/my-photo.jpg") -->
+                    <img src="https://i.ibb.co/fVGjb4Mp/image.png" alt="Владислав Проценко">
+                </div>
+            </div>
+
+            <!-- Scroll Down Indicator -->
+            <a href="#portfolio" class="scroll-indicator reveal-element delay-3">
+                <span class="mouse">
+                    <span class="wheel"></span>
+                </span>
+            </a>
+        </section>
+
+        <section class="portfolio" id="portfolio">
+            <div class="container">
+                <div class="section-header reveal-element">
+                    <h2 class="section-title" data-i18n="portfolio_title">Портфоліо</h2>
+                    <p class="section-desc" data-i18n="portfolio_desc">Натисніть на категорію, щоб відфільтрувати
+                        проєкти</p>
+                </div>
+
+                <div class="filter-container reveal-element delay-1">
+                    <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Всі</button>
+                    <!-- Classic Design -->
+                    <button class="filter-btn" data-filter="pack" data-i18n="filter_pack">Дизайн пакування</button>
+                    <button class="filter-btn" data-filter="print" data-i18n="filter_print">Дизайн друкованої
+                        продукції</button>
+                    <button class="filter-btn" data-filter="web-banner"
+                        data-i18n="filter_web_banner">Веб-банери</button>
+                    <button class="filter-btn" data-filter="large-banner" data-i18n="filter_large_banner">Широкоформатні
+                        банери</button>
+                    <button class="filter-btn" data-filter="instagram" data-i18n="filter_instagram">Візуал
+                        Instagram</button>
+                    <button class="filter-btn" data-filter="logo" data-i18n="filter_logo">Логотипи</button>
+                    <button class="filter-btn" data-filter="illustration"
+                        data-i18n="filter_illustration">Ілюстрації</button>
+                    <button class="filter-btn" data-filter="clothing" data-i18n="filter_clothing">Принти для
+                        одягу</button>
+                    <!-- AI Design -->
+                    <button class="filter-btn ai-filter" data-filter="ai-photo" data-i18n="filter_ai_photo">AI
+                        фотосесії</button>
+                    <button class="filter-btn ai-filter" data-filter="ai-video" data-i18n="filter_ai_video">AI
+                        відео-креативи</button>
+                    <button class="filter-btn ai-filter" data-filter="ai-image-video"
+                        data-i18n="filter_ai_image">Іміджеві AI відео</button>
+                </div>
+
+                <div class="portfolio-grid">
+                    <!-- Cards will be populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <section class="about" id="about">
+            <div class="container about-container">
+                <div class="about-content reveal-element">
+                    <h2 class="section-title" data-i18n="about_title">Про мене</h2>
+                    <div class="about-text-wrapper">
+                        <p class="about-text">
+                            <span data-i18n="about_text_1">Мене звати <strong>Владислав</strong>, я - професійний
+                                графічний дизайнер та AI-кріейтор</span>
+                        </p>
+                        <p class="about-text" data-i18n="about_text_2">
+                            Мій профіль — це симбіоз передових нейромережевих технологій з класичними принципами
+                            дизайну. Я створюю візуальні концепції, які не тільки виглядають стильно, але й виділяють
+                            бренди на тлі конкурентів.
+                        </p>
+                        <ul class="stats-list">
+                            <li><span class="stat-number">5+</span> <span data-i18n="stat_years">Років досвіду</span>
+                            </li>
+                            <li><span class="stat-number">50+</span> <span data-i18n="stat_projects">Проєктів</span>
+                            </li>
+                            <li><span class="stat-number">AI</span> <span data-i18n="stat_expert">Експерт</span></li>
+                        </ul>
+
+                        <div class="skills-block reveal-element delay-2">
+                            <h3 class="skills-title" data-i18n="skills_title">Інструменти & Технології</h3>
+
+                            <div class="skill-group">
+                                <h4 class="skill-group-title" data-i18n="skills_design">Графічні редактори</h4>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <path
+                                                d="M8 10v4m0-4h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H8m6-4c-.5-.6-1.5-.7-2-.3s-1 1-1 1.5 1 1 1.5 1 1 1.5 1 2-1.5 2-2 1.5c-1-.5-1-1.5-1-1.5">
+                                            </path>
+                                        </svg>
+                                        Photoshop
+                                    </span>
+                                    <span class="skill-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <path d="M8 14l2-4 2 4m-3.5-1h3m5-3v4m0-4h.01"></path>
+                                        </svg>
+                                        Illustrator
+                                    </span>
+                                    <span class="skill-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z"></path>
+                                            <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z"></path>
+                                            <path d="M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z"></path>
+                                            <path d="M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"></path>
+                                            <path d="M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z"></path>
+                                        </svg>
+                                        Figma
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="skill-group">
+                                <h4 class="skill-group-title" data-i18n="skills_ai">AI Інструменти</h4>
+                                <div class="skill-tags">
+                                    <span class="skill-tag ai-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 6v6l4 2"></path>
+                                        </svg>
+                                        ChatGPT
+                                    </span>
+                                    <span class="skill-tag ai-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z">
+                                            </path>
+                                        </svg>
+                                        Gemini
+                                    </span>
+                                    <span class="skill-tag ai-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path
+                                                d="M4 13c3.5-2 8-2 11 1 2 2 2.5 5 2 7-3-1-6-3-9-4-3-1-6-1.5-6-5s3-4 6-4">
+                                            </path>
+                                        </svg>
+                                        Nano Banana Pro
+                                    </span>
+                                    <span class="skill-tag ai-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                            <circle cx="8" cy="12" r="2"></circle>
+                                        </svg>
+                                        Veo 3.1
+                                    </span>
+                                    <span class="skill-tag ai-tag">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polyLine points="14.5 4 19.5 9 5.5 23 1.5 23 1.5 19 14.5 4"></polyLine>
+                                            <line x1="11" y1="7" x2="16" y2="12"></line>
+                                            <path d="M8 2l2 2m4-2l-2 2m8 6l2 2m-2-4l2-2"></path>
+                                        </svg>
+                                        Kling
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual reveal-element delay-1">
+                    <div class="abstract-shape">
+                        <div class="circle"></div>
+                        <div class="square"></div>
+                        <div class="dots"></div>
+                    </div>
+                    <!-- 📸 ФОТОГРАФІЯ ПРО МЕНЕ -->
+                    <div class="about-photo">
+                        <!-- ЗАМІНІТЬ src="..." НА ШЛЯХ ДО ВАШОГО ФОТО (РЕКОМЕНДОВАНО 400x400 px, АБО КВАДРАТНІ ПРОПОРЦІЇ) -->
+                        <img src="https://i.ibb.co/d0gjBRmM/Waist-up-studio-shot-202603191254.jpg"
+                            alt="Владислав Проценко">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contacts" id="contacts">
+            <div class="container container-narrow">
+                <div class="section-header text-center reveal-element">
+                    <h2 class="section-title" data-i18n="contacts_title">Зв'язатися зі мною</h2>
+                    <p class="section-desc" data-i18n="contacts_desc">Відкритий до нових проєктів та співпраці</p>
+                </div>
+
+                <div class="contacts-grid">
+                    <div class="contact-info reveal-element">
+                        <h3 class="contact-heading" data-i18n="contact_social">Соцмережі & Месенджери</h3>
+                        <div class="social-links">
+                            <!-- 📱 ВСТАВТЕ СИЛКУ НА ТВІЙ TELEGRAM ЗАМІСТЬ '#' У АТРИБУТІ href="..." -->
+                            <a href="https://t.me/v_47_p" class="social-card" target="_blank" rel="noopener noreferrer">
+                                <div class="social-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21.5 2L2 11.5L8.5 14L10 22L13.5 16.5L19.5 20L21.5 2Z" />
+                                    </svg>
+                                </div>
+                                <div class="social-name">Telegram</div>
+                            </a>
+                            <!-- 📱 ВСТАВТЕ СИЛКУ НА ТВІЙ INSTAGRAM ЗАМІСТЬ '#' У АТРИБУТІ href="..." -->
+                            <a href="https://www.instagram.com/vprotsenko_design/" class="social-card" target="_blank"
+                                rel="noopener noreferrer">
+                                <div class="social-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                                    </svg>
+                                </div>
+                                <div class="social-name">Instagram</div>
+                            </a>
+                            <!-- 📱 ВСТАВТЕ СИЛКУ НА ТВІЙ LINKEDIN ЗАМІСТЬ '#' У АТРИБУТІ href="..." -->
+                            <a href="#" class="social-card" target="_blank" rel="noopener noreferrer">
+                                <div class="social-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path
+                                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                        <rect x="2" y="9" width="4" height="12" />
+                                        <circle cx="4" cy="4" r="2" />
+                                    </svg>
+                                </div>
+                                <div class="social-name">LinkedIn</div>
+                            </a>
+                        </div>
+                        <div class="direct-contact">
+                            <p>Email: <a href="mailto:vladyslav.protsenko.design@gmail.com"
+                                    class="accent-link">vladyslav.protsenko.design@gmail.com</a></p>
+                        </div>
+                    </div>
+
+                    <form class="contact-form reveal-element delay-1" action="https://formspree.io/f/mreyroal"
+                        method="POST">
+                        <h3 class="contact-heading" data-i18n="contact_write">Написати мені</h3>
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Ваше ім'я" required class="form-input"
+                                data-i18n-placeholder="form_name">
+                            <label for="name" data-i18n="form_name">Ваше ім'я</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="replyto" placeholder="Email" required
+                                class="form-input" data-i18n-placeholder="form_email">
+                            <label for="email" data-i18n="form_email">Ваш Email</label>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Опишіть завдання..." rows="4" required
+                                class="form-input" data-i18n-placeholder="form_msg_placeholder"></textarea>
+                            <label for="message" data-i18n="form_msg">Повідомлення</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" data-i18n="form_submit">Відправити
+                            заявку</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <a href="#home" class="logo">V<span>P</span>.</a>
+            </div>
+            <p>&copy; 2026 Vladislav Protsenko. All rights reserved.</p>
+            <p class="footer-tagline">Designed with <span style="color:var(--color-accent);">♥</span> and AI.</p>
+        </div>
+    </footer>
+
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal" aria-hidden="true" role="dialog">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content reveal-element">
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+            <div class="modal-body">
+                <div class="modal-carousel">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Images/videos injected dynamically -->
+                    </div>
+                    <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">&lsaquo;</button>
+                    <button class="carousel-btn next" id="carouselNext" aria-label="Next">&rsaquo;</button>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+                <div class="modal-info">
+                    <span class="portfolio-category" id="modalCategory">Category</span>
+                    <h3 class="modal-title" id="modalTitle">Project Title</h3>
+                    <div class="modal-desc" id="modalDesc">
+                        Project Description
+                    </div>
+                    <a href="#contacts" class="btn btn-primary modal-contact-btn" id="modalContactBtn"
+                        data-i18n="btn_contact">Зв'язатися</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
