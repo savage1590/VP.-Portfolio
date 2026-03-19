@@ -447,13 +447,13 @@ const portfolioData = [
     },
     {
         id: 'large-banner-1',
-        title: { ua: 'Широкоформатний банер "Одеська"', en: 'Large Format Banner "Odeska"' },
+        title: { ua: 'Широкоформатний іміджевий банер для ювелірного бренду "TSATSKY"', en: 'Large Format Image Banner for "TSATSKY" Jewelry Brand' },
         category: 'large-banner',
         catName: { ua: 'Широкоформатні банери', en: 'Large Format Banners' },
         type: 'image',
         description: {
-            ua: 'Дизайн та реалістична 3D-візуалізація розміщення широкоформатного банера на фасаді будівлі.',
-            en: 'Design and realistic 3D visualization of a large-format banner placement on a building facade.'
+            ua: 'Розробка дизайну широкоформатного іміджевого банеру для ювелірного бренду.',
+            en: 'Design development of a large-format image banner for a jewelry brand.'
         },
         preview: 'projects/big size banner 1/Баннер одесская.PSD).webp',
         images: [
