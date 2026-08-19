@@ -417,8 +417,14 @@ if (!db) {
                         }
                         return null;
                     }
-                    if (cleanSql.includes('FROM projects WHERE id = ?')) {
+                    if (cleanSql.includes('FROM projects') && (cleanSql.includes('p.id = ?') || cleanSql.includes('id = ?')) && !cleanSql.includes('slug = ?')) {
                         const p = state.projects.find(x => x.id === params[0]);
+                        if (!p) return null;
+                        const c = state.categories.find(cat => cat.id === p.category_id);
+                        return { ...p, category_name_ua: c?.name_ua, category_name_en: c?.name_en, category_slug: c?.slug };
+                    }
+                    if (cleanSql.includes('FROM projects') && cleanSql.includes('slug = ?')) {
+                        const p = state.projects.find(x => x.slug === params[0]);
                         if (!p) return null;
                         const c = state.categories.find(cat => cat.id === p.category_id);
                         return { ...p, category_name_ua: c?.name_ua, category_name_en: c?.name_en, category_slug: c?.slug };
@@ -426,7 +432,7 @@ if (!db) {
                     if (cleanSql.includes('FROM categories WHERE slug = ?')) {
                         return state.categories.find(c => c.slug === params[0]) || null;
                     }
-                    if (cleanSql.includes('FROM categories WHERE id = ?')) {
+                    if (cleanSql.includes('FROM categories') && (cleanSql.includes('id = ?') || cleanSql.includes('c.id = ?'))) {
                         return state.categories.find(c => c.id === params[0]) || null;
                     }
                     if (cleanSql.includes('FROM site_content WHERE section_key = ?')) {
@@ -461,11 +467,11 @@ if (!db) {
                             };
                         }).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
                     }
-                    if (cleanSql.includes('FROM project_images WHERE project_id = ?')) {
+                    if (cleanSql.includes('FROM project_images')) {
                         return state.project_images
                             .filter(img => img.project_id === params[0])
                             .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-                            .map(img => ({ image_url: img.image_url }));
+                            .map(img => ({ image_url: img.image_url, sort_order: img.sort_order, id: img.id, project_id: img.project_id }));
                     }
                     if (cleanSql.includes('FROM site_content')) {
                         return Object.entries(state.site_content).map(([k, v]) => ({
