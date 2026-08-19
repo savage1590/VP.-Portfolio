@@ -445,22 +445,49 @@ function initHeaderScroll() {
 
 // Mobile navigation
 function initMobileNav() {
-    const burger = document.querySelector(".burger-menu");
-    const nav = document.querySelector(".nav");
-    const navLinks = document.querySelectorAll(".nav-link");
+    const burger = document.getElementById("burgerMenu") || document.querySelector(".burger-menu");
+    const nav = document.getElementById("mainNav") || document.querySelector(".nav");
+    const backdrop = document.getElementById("navBackdrop");
+    const navLinks = document.querySelectorAll(".nav-link, .btn-mobile-contact");
 
     if (!burger || !nav) return;
 
+    function openNav() {
+        burger.classList.add("active");
+        nav.classList.add("active");
+        if (backdrop) backdrop.classList.add("active");
+        document.body.classList.add("nav-open");
+    }
+
+    function closeNav() {
+        burger.classList.remove("active");
+        nav.classList.remove("active");
+        if (backdrop) backdrop.classList.remove("active");
+        document.body.classList.remove("nav-open");
+    }
+
     burger.addEventListener("click", () => {
-        burger.classList.toggle("active");
-        nav.classList.toggle("active");
+        if (nav.classList.contains("active")) {
+            closeNav();
+        } else {
+            openNav();
+        }
     });
+
+    if (backdrop) {
+        backdrop.addEventListener("click", closeNav);
+    }
 
     navLinks.forEach(link => {
         link.addEventListener("click", () => {
-            burger.classList.remove("active");
-            nav.classList.remove("active");
+            closeNav();
         });
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && nav.classList.contains("active")) {
+            closeNav();
+        }
     });
 }
 
@@ -646,6 +673,42 @@ function initModalControls() {
             currentCarouselIndex = (currentCarouselIndex + 1) % currentMediaList.length;
             updateCarousel();
         });
+    }
+
+    // Touch swipe support for mobile carousel
+    const carouselContainer = document.querySelector(".modal-carousel");
+    if (carouselContainer) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+
+        carouselContainer.addEventListener("touchstart", (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        carouselContainer.addEventListener("touchend", (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            // Only trigger if horizontal swipe is dominant and above threshold (40px)
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40 && currentMediaList.length > 1) {
+                if (diffX < 0) {
+                    // Swiped left -> Next
+                    currentCarouselIndex = (currentCarouselIndex + 1) % currentMediaList.length;
+                } else {
+                    // Swiped right -> Prev
+                    currentCarouselIndex = (currentCarouselIndex - 1 + currentMediaList.length) % currentMediaList.length;
+                }
+                updateCarousel();
+            }
+        }
     }
 }
 

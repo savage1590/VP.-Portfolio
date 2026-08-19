@@ -65,7 +65,7 @@ const auth = {
         } catch (err) {
             let msg = err.data?.error || err.message || 'Помилка авторизації';
             if (err.status === 404 || err.message?.includes('404')) {
-                msg = 'Помилка 404: Сервер не запущено або сторінку відкрито не через http://localhost:3000/admin. Будь ласка, запустіть start-server.bat і перейдіть за адресою http://localhost:3000/admin';
+                msg = 'Помилка 404: Бекенд-сервер недоступний або API-маршрут не знайдено.';
             } else if (err.status === 401) {
                 msg = 'Невірний Email або пароль. Перевірте введені дані.';
             }

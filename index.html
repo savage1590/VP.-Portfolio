@@ -27,7 +27,7 @@
                 <img src="img/logo.svg" alt="VP Design Logo" class="site-logo">
             </a>
 
-            <nav class="nav">
+            <nav class="nav" id="mainNav">
                 <ul class="nav-list">
                     <li><a href="#portfolio" class="nav-link" data-i18n="nav_portfolio">Кейси</a></li>
                     <li><a href="#services" class="nav-link" data-i18n="nav_services">Послуги</a></li>
@@ -39,18 +39,22 @@
                         <span style="color:var(--color-text-muted); cursor:default">|</span>
                         <button class="lang-btn" data-lang="en">EN</button>
                     </li>
+                    <li class="mobile-nav-cta">
+                        <a href="#contacts" class="btn-mobile-contact" data-i18n="btn_discuss_project">Обговорити проєкт</a>
+                    </li>
                 </ul>
             </nav>
 
             <a href="#contacts" class="btn-header-contact" data-i18n="btn_discuss_project">Обговорити проєкт</a>
 
-            <div class="burger-menu" aria-label="Toggle navigation">
+            <div class="burger-menu" id="burgerMenu" aria-label="Toggle navigation" role="button" tabindex="0">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
     </header>
+    <div class="nav-backdrop" id="navBackdrop"></div>
 
     <main>
         <!-- Hero Section -->

@@ -2,14 +2,14 @@ const { DatabaseSync } = require('node:sqlite');
 const path = require('node:path');
 const fs = require('node:fs');
 
-// Ensure data directory exists
-const dataDir = path.join(__dirname, '../../data');
+// Support both local development and Vercel serverless environment (/tmp)
+const isVercel = Boolean(process.env.VERCEL);
+const dataDir = isVercel ? '/tmp' : path.join(__dirname, '../../data');
+const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
+
 if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
-
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -19,7 +19,6 @@ const db = new DatabaseSync(dbPath);
 
 // Enable WAL mode and foreign keys for high performance and integrity
 db.exec(`
-    PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
 
     CREATE TABLE IF NOT EXISTS users (
@@ -100,5 +99,17 @@ db.exec(`
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 `);
+
+// Auto-seed if database is freshly initialized (no admin user yet)
+try {
+    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get();
+    if (!userCount || userCount.count === 0) {
+        // Run initial seeding
+        const seedDatabase = require('./seed');
+        seedDatabase();
+    }
+} catch (e) {
+    // Seeder fallback
+}
 
 module.exports = db;
