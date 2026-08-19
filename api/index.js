@@ -1,6 +1,4 @@
-// Vercel Serverless Function Bridge
+// Vercel Serverless Function Bridge for Express
 const app = require('../server/app');
 
-module.exports = (req, res) => {
-    return app(req, res);
-};
+module.exports = app;
