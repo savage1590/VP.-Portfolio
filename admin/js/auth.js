@@ -63,7 +63,13 @@ const auth = {
             this.showApp();
             app.initDashboard();
         } catch (err) {
-            errorAlert.textContent = err.data?.error || err.message || 'Помилка авторизації';
+            let msg = err.data?.error || err.message || 'Помилка авторизації';
+            if (err.status === 404 || err.message?.includes('404')) {
+                msg = 'Помилка 404: Сервер не запущено або сторінку відкрито не через http://localhost:3000/admin. Будь ласка, запустіть start-server.bat і перейдіть за адресою http://localhost:3000/admin';
+            } else if (err.status === 401) {
+                msg = 'Невірний Email або пароль. Перевірте введені дані.';
+            }
+            errorAlert.textContent = msg;
             errorAlert.style.display = 'block';
         } finally {
             submitBtn.disabled = false;
