@@ -3,9 +3,15 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+const isVercel = Boolean(process.env.VERCEL);
+const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
+
+try {
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+} catch (e) {
+    // Silently handle read-only filesystems in serverless
 }
 
 // Allowed MIME types and extensions
