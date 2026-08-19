@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP Design — Захищена панель керування</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" type="image/svg+xml" href="../img/logo.svg">
+</head>
+
+<body>
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Confirmation Modal Dialog -->
+    <div id="confirmModal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-box confirm-box">
+            <h3 id="confirmTitle" class="confirm-title">Підтвердження дії</h3>
+            <p id="confirmMessage" class="confirm-message">Ви впевнені, що бажаєте продовжити?</p>
+            <div id="confirmExtraContent" class="confirm-extra"></div>
+            <div class="confirm-actions">
+                <button id="btnConfirmCancel" class="btn-secondary">Скасувати</button>
+                <button id="btnConfirmProceed" class="btn-danger">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen (Overlay when unauthenticated) -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="../img/logo.svg" alt="VP Design Logo" class="login-logo">
+                <h2 class="login-title">VP. CMS STUDIO</h2>
+                <p class="login-subtitle">Безпечна авторизація адміністратора</p>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@vprotsenko.design" required autocomplete="email" class="admin-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <div class="password-input-wrap">
+                        <input type="password" id="loginPassword" placeholder="••••••••••••" required autocomplete="current-password" class="admin-input">
+                        <button type="button" id="togglePasswordBtn" class="btn-toggle-pwd" aria-label="Показати пароль">👁️</button>
+                    </div>
+                </div>
+
+                <div id="loginError" class="auth-error-alert" style="display: none;"></div>
+
+                <button type="submit" id="btnLoginSubmit" class="btn-primary btn-block">
+                    <span class="btn-text">Увійти в панель</span>
+                    <span class="btn-spinner" style="display: none;"></span>
+                </button>
+            </form>
+            <div class="login-footer">
+                <p>Захищено двофакторною перевіркою сесій та Scrypt-хешуванням</p>
+                <a href="../" target="_blank" class="link-back-site">← Перейти на публічний сайт</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Dashboard App -->
+    <div id="adminApp" class="admin-app" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <a href="../" target="_blank" class="sidebar-brand">
+                    <img src="../img/logo.svg" alt="VP Logo" class="sidebar-logo">
+                    <div>
+                        <span class="brand-name">VP. STUDIO</span>
+                        <span class="brand-badge">ADMIN</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li>
+                        <button class="nav-btn active" data-view="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Огляд</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-view="projects">
+                            <span class="nav-icon">📁</span>
+                            <span class="nav-text">Проєкти</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-view="categories">
+                            <span class="nav-icon">🏷️</span>
+                            <span class="nav-text">Категорії</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-view="content">
+                            <span class="nav-icon">📝</span>
+                            <span class="nav-text">Контент сайту</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="admin-user-card">
+                    <div class="user-avatar">VP</div>
+                    <div class="user-info">
+                        <span id="userEmailDisplay" class="user-email">admin@vprotsenko.design</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
+                <div class="sidebar-footer-actions">
+                    <a href="/api/backup" download class="btn-icon" title="Завантажити резервну копію БД (.db)">💾</a>
+                    <button id="btnOpenPasswordModal" class="btn-icon" title="Змінити пароль">⚙️</button>
+                    <button id="btnLogout" class="btn-icon btn-logout" title="Вийти з акаунта">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle" class="page-title">Огляд системи</h1>
+                </div>
+
+                <div class="topbar-right">
+                    <a href="../" target="_blank" class="btn-view-site" title="Відкрити публічний сайт у новій вкладці">
+                        <span>Переглянути сайт</span> ↗
+                    </a>
+                    <button id="btnQuickCreateProject" class="btn-primary">
+                        <span>+ Новий проєкт</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="admin-content-area">
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="viewDashboard" class="admin-view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon orange">📁</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Усього проєктів</span>
+                                <h3 id="statTotalProjects" class="stat-val">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">🟢</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Опубліковано</span>
+                                <h3 id="statPublishedProjects" class="stat-val">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">🏷️</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Категорій</span>
+                                <h3 id="statTotalCategories" class="stat-val">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">⚡</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Стан системи</span>
+                                <h3 class="stat-val status-badge-val">ONLINE</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects Card -->
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">Останні проєкти</h3>
+                                <p class="card-subtitle">Швидкий доступ до редагування та статусу</p>
+                            </div>
+                            <button class="btn-secondary" onclick="app.switchView('projects')">Усі проєкти →</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px;">Обкладинка</th>
+                                        <th>Назва проєкту</th>
+                                        <th>Категорія</th>
+                                        <th>Статус</th>
+                                        <th style="text-align: right;">Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardProjectsList">
+                                    <!-- Injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PROJECTS VIEW -->
+                <section id="viewProjects" class="admin-view">
+                    <div class="view-actions-bar">
+                        <div class="search-filter-group">
+                            <input type="text" id="projectSearchInput" placeholder="🔍 Пошук за назвою чи клієнтом..." class="admin-input search-input">
+                            <select id="projectCategoryFilter" class="admin-select">
+                                <option value="">Усі категорії</option>
+                            </select>
+                            <select id="projectStatusFilter" class="admin-select">
+                                <option value="">Усі статуси</option>
+                                <option value="1">Лише опубліковані</option>
+                                <option value="0">Лише приховані</option>
+                            </select>
+                        </div>
+                        <button id="btnCreateProject" class="btn-primary">+ Створити проєкт</button>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Порядок</th>
+                                        <th style="width: 70px;">Прев'ю</th>
+                                        <th>Назва проєкту (UA / EN)</th>
+                                        <th>Категорія</th>
+                                        <th>Медіа</th>
+                                        <th>Статус</th>
+                                        <th style="text-align: right;">Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectsTableBody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. CATEGORIES VIEW -->
+                <section id="viewCategories" class="admin-view">
+                    <div class="view-actions-bar">
+                        <div>
+                            <p class="section-lead-text">Керуйте категоріями фільтрації та їх порядком у портфоліо</p>
+                        </div>
+                        <button id="btnCreateCategory" class="btn-primary">+ Додати категорію</button>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 60px;">Порядок</th>
+                                        <th>Slug / Ідентифікатор</th>
+                                        <th>Назва (UA)</th>
+                                        <th>Назва (EN)</th>
+                                        <th>Кількість робіт</th>
+                                        <th>Видимість</th>
+                                        <th style="text-align: right;">Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesTableBody">
+                                    <!-- Injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. SITE CONTENT VIEW -->
+                <section id="viewContent" class="admin-view">
+                    <div class="content-editor-tabs">
+                        <button class="content-tab-btn active" data-tab="hero">Головний екран (Hero)</button>
+                        <button class="content-tab-btn" data-tab="services">Послуги (Services)</button>
+                        <button class="content-tab-btn" data-tab="faq">Часті запитання (FAQ)</button>
+                        <button class="content-tab-btn" data-tab="metrics">Метрики та цифри</button>
+                        <button class="content-tab-btn" data-tab="contacts">Контакти та соцмережі</button>
+                    </div>
+
+                    <!-- Hero Tab -->
+                    <div id="tabContentHero" class="content-tab-pane active">
+                        <form id="formContentHero" class="admin-card content-form">
+                            <h3 class="card-title">Тексти головного екрана (Hero)</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Статус зайнятості (UA)</label>
+                                    <input type="text" name="status_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Статус зайнятості (EN)</label>
+                                    <input type="text" name="status_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Дескриптор ролі (UA)</label>
+                                    <input type="text" name="role_badge_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Дескриптор ролі (EN)</label>
+                                    <input type="text" name="role_badge_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Слоган рядок 1 (UA)</label>
+                                    <input type="text" name="slogan_1_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Слоган рядок 1 (EN)</label>
+                                    <input type="text" name="slogan_1_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Слоган акцентний рядок 2 (UA)</label>
+                                    <textarea name="slogan_2_ua" rows="2" class="admin-input" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Слоган акцентний рядок 2 (EN)</label>
+                                    <textarea name="slogan_2_en" rows="2" class="admin-input" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-actions">
+                                <button type="submit" class="btn-primary">Зберегти налаштування Hero</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Services Tab -->
+                    <div id="tabContentServices" class="content-tab-pane">
+                        <form id="formContentServices" class="admin-card content-form">
+                            <h3 class="card-title">4 Напрямки співпраці (Послуги)</h3>
+                            
+                            <!-- Service 1 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">1. Рекламні системи та креативи</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Заголовок (UA)</label>
+                                        <input type="text" name="s1_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Заголовок (EN)</label>
+                                        <input type="text" name="s1_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Термін виконання (UA)</label>
+                                        <input type="text" name="s1_term_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Термін виконання (EN)</label>
+                                        <input type="text" name="s1_term_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Опис (UA)</label>
+                                        <textarea name="s1_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Опис (EN)</label>
+                                        <textarea name="s1_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service 2 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">2. AI-візуал та CGI продакшн</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Заголовок (UA)</label>
+                                        <input type="text" name="s2_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Заголовок (EN)</label>
+                                        <input type="text" name="s2_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Термін виконання (UA)</label>
+                                        <input type="text" name="s2_term_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Термін виконання (EN)</label>
+                                        <input type="text" name="s2_term_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Опис (UA)</label>
+                                        <textarea name="s2_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Опис (EN)</label>
+                                        <textarea name="s2_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service 3 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">3. Брендинг, упаковка та поліграфія</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Заголовок (UA)</label>
+                                        <input type="text" name="s3_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Заголовок (EN)</label>
+                                        <input type="text" name="s3_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Термін виконання (UA)</label>
+                                        <input type="text" name="s3_term_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Термін виконання (EN)</label>
+                                        <input type="text" name="s3_term_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Опис (UA)</label>
+                                        <textarea name="s3_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Опис (EN)</label>
+                                        <textarea name="s3_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service 4 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">4. Outdoor та Retail дизайн</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Заголовок (UA)</label>
+                                        <input type="text" name="s4_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Заголовок (EN)</label>
+                                        <input type="text" name="s4_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Термін виконання (UA)</label>
+                                        <input type="text" name="s4_term_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Термін виконання (EN)</label>
+                                        <input type="text" name="s4_term_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Опис (UA)</label>
+                                        <textarea name="s4_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Опис (EN)</label>
+                                        <textarea name="s4_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-actions">
+                                <button type="submit" class="btn-primary">Зберегти напрямки послуг</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- FAQ Tab -->
+                    <div id="tabContentFaq" class="content-tab-pane">
+                        <form id="formContentFaq" class="admin-card content-form">
+                            <h3 class="card-title">Часті запитання (FAQ)</h3>
+
+                            <!-- Q1 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">Питання 1: Початок співпраці</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Питання (UA)</label>
+                                        <input type="text" name="q1_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Питання (EN)</label>
+                                        <input type="text" name="q1_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Відповідь (UA)</label>
+                                        <textarea name="q1_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Відповідь (EN)</label>
+                                        <textarea name="q1_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">Питання 2: Формати передачі файлів</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Питання (UA)</label>
+                                        <input type="text" name="q2_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Питання (EN)</label>
+                                        <input type="text" name="q2_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Відповідь (UA)</label>
+                                        <textarea name="q2_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Відповідь (EN)</label>
+                                        <textarea name="q2_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">Питання 3: Використання штучного інтелекту</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Питання (UA)</label>
+                                        <input type="text" name="q3_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Питання (EN)</label>
+                                        <input type="text" name="q3_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Відповідь (UA)</label>
+                                        <textarea name="q3_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Відповідь (EN)</label>
+                                        <textarea name="q3_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q4 -->
+                            <div class="service-config-box">
+                                <h4 class="sub-card-title">Питання 4: Робота з брендбуком</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Питання (UA)</label>
+                                        <input type="text" name="q4_title_ua" class="admin-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Питання (EN)</label>
+                                        <input type="text" name="q4_title_en" class="admin-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Відповідь (UA)</label>
+                                        <textarea name="q4_desc_ua" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Відповідь (EN)</label>
+                                        <textarea name="q4_desc_en" rows="2" class="admin-input" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-actions">
+                                <button type="submit" class="btn-primary">Зберегти відповіді FAQ</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Metrics Tab -->
+                    <div id="tabContentMetrics" class="content-tab-pane">
+                        <form id="formContentMetrics" class="admin-card content-form">
+                            <h3 class="card-title">Показники та метрики довіри</h3>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label>Метрика 1 (Цифра)</label>
+                                    <input type="text" name="m1_num" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 1 (UA)</label>
+                                    <input type="text" name="m1_label_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 1 (EN)</label>
+                                    <input type="text" name="m1_label_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label>Метрика 2 (Цифра)</label>
+                                    <input type="text" name="m2_num" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 2 (UA)</label>
+                                    <input type="text" name="m2_label_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 2 (EN)</label>
+                                    <input type="text" name="m2_label_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label>Метрика 3 (Цифра)</label>
+                                    <input type="text" name="m3_num" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 3 (UA)</label>
+                                    <input type="text" name="m3_label_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 3 (EN)</label>
+                                    <input type="text" name="m3_label_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label>Метрика 4 (Цифра)</label>
+                                    <input type="text" name="m4_num" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 4 (UA)</label>
+                                    <input type="text" name="m4_label_ua" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Підпис 4 (EN)</label>
+                                    <input type="text" name="m4_label_en" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-actions">
+                                <button type="submit" class="btn-primary">Зберегти показники метрик</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Contacts Tab -->
+                    <div id="tabContentContacts" class="content-tab-pane">
+                        <form id="formContentContacts" class="admin-card content-form">
+                            <h3 class="card-title">Контакти та соціальні посилання</h3>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Telegram посилання</label>
+                                    <input type="url" name="telegram_url" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Telegram нікнейм</label>
+                                    <input type="text" name="telegram_handle" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Instagram посилання</label>
+                                    <input type="url" name="instagram_url" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Instagram нікнейм</label>
+                                    <input type="text" name="instagram_handle" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>LinkedIn посилання</label>
+                                    <input type="url" name="linkedin_url" class="admin-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Контактний Email</label>
+                                    <input type="email" name="email" class="admin-input" required>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-actions">
+                                <button type="submit" class="btn-primary">Зберегти контакти</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- PROJECT EDITOR MODAL -->
+    <div id="projectEditorModal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-box modal-lg">
+            <div class="modal-box-header">
+                <h2 id="projectModalTitle" class="modal-box-title">Створення нового проєкту</h2>
+                <button type="button" class="btn-modal-close" data-close-modal>&times;</button>
+            </div>
+
+            <form id="projectForm" class="modal-form">
+                <input type="hidden" id="projectFormId">
+
+                <div class="editor-tabs-nav">
+                    <button type="button" class="editor-nav-btn active" data-editor-tab="main">Основна інформація</button>
+                    <button type="button" class="editor-nav-btn" data-editor-tab="details">Кейс-стаді (UA / EN)</button>
+                    <button type="button" class="editor-nav-btn" data-editor-tab="media">Галерея зображень</button>
+                </div>
+
+                <!-- Tab 1: Main Info -->
+                <div id="editorTabMain" class="editor-tab-content active">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectTitleUa">Назва проєкту (UA) *</label>
+                            <input type="text" id="projectTitleUa" required class="admin-input" placeholder="Luxe Noir — Преміальне пакування">
+                        </div>
+                        <div class="form-group">
+                            <label for="projectTitleEn">Назва проєкту (EN) *</label>
+                            <input type="text" id="projectTitleEn" required class="admin-input" placeholder="Luxe Noir — Luxury Packaging">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectCategory">Категорія *</label>
+                            <select id="projectCategory" required class="admin-select">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectSlug">Slug (URL адреса)</label>
+                            <input type="text" id="projectSlug" class="admin-input" placeholder="luxe-noir-jewelry (автогенерація якщо пусто)">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectClient">Клієнт / Бренд</label>
+                            <input type="text" id="projectClient" class="admin-input" placeholder="Luxe Noir Atelier">
+                        </div>
+                        <div class="form-group">
+                            <label for="projectYear">Рік</label>
+                            <input type="text" id="projectYear" class="admin-input" placeholder="2026">
+                        </div>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="projectIsPublished" checked>
+                            <span class="checkmark"></span>
+                            <span class="checkbox-label">Опублікувати на сайті відразу після збереження</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Case Study Details -->
+                <div id="editorTabDetails" class="editor-tab-content">
+                    <div class="case-bilingual-grid">
+                        <div class="case-lang-col">
+                            <h4 class="lang-col-title">🇺🇦 Українська версія</h4>
+                            <div class="form-group">
+                                <label for="projectTaskUa">📌 Задача проєкту</label>
+                                <textarea id="projectTaskUa" rows="3" class="admin-input" placeholder="Яку задачу бізнесу вирішував цей дизайн..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectDirectionUa">🎨 Візуальний напрямок</label>
+                                <textarea id="projectDirectionUa" rows="3" class="admin-input" placeholder="Стилістика, композиція, текстури..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectSolutionUa">💡 Дизайн-рішення</label>
+                                <textarea id="projectSolutionUa" rows="3" class="admin-input" placeholder="Що саме було розроблено та підготовлено..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectResultUa">🚀 Результат</label>
+                                <textarea id="projectResultUa" rows="3" class="admin-input" placeholder="Фінальний бізнес-результат..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="case-lang-col">
+                            <h4 class="lang-col-title">🇬🇧 English version</h4>
+                            <div class="form-group">
+                                <label for="projectTaskEn">📌 Project Objective</label>
+                                <textarea id="projectTaskEn" rows="3" class="admin-input" placeholder="Project challenge or scope..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectDirectionEn">🎨 Visual Direction</label>
+                                <textarea id="projectDirectionEn" rows="3" class="admin-input" placeholder="Aesthetics, mood, typography..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectSolutionEn">💡 Design Solution</label>
+                                <textarea id="projectSolutionEn" rows="3" class="admin-input" placeholder="Deliverables and execution..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="projectResultEn">🚀 Business Outcome</label>
+                                <textarea id="projectResultEn" rows="3" class="admin-input" placeholder="Measurable impact or result..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Media Gallery & Uploads -->
+                <div id="editorTabMedia" class="editor-tab-content">
+                    <div class="upload-dropzone" id="uploadDropzone">
+                        <input type="file" id="fileInput" multiple accept="image/*,video/mp4,video/webm" style="display: none;">
+                        <div class="dropzone-content">
+                            <span class="dropzone-icon">📤</span>
+                            <h4 class="dropzone-title">Перетягніть файли сюди або <button type="button" class="btn-browse" id="btnBrowseFiles">оберіть на комп'ютері</button></h4>
+                            <p class="dropzone-hint">Підтримуються: JPG, PNG, WEBP, SVG, MP4 (до 25MB на файл)</p>
+                        </div>
+                        <div id="uploadProgress" class="upload-progress-bar" style="display: none;">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="gallery-manager">
+                        <div class="gallery-header">
+                            <h4>Медіа-файли проєкту (<span id="galleryCount">0</span>)</h4>
+                            <small>Клікніть на зірочку ⭐, щоб зробити обкладинкою, або 📋 щоб скопіювати URL</small>
+                        </div>
+
+                        <div class="gallery-grid" id="projectGalleryGrid">
+                            <!-- Injected dynamically with thumbnails, cover badge, remove button -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-box-footer">
+                    <div class="modal-footer-left">
+                        <button type="button" class="btn-secondary" id="btnPreviewProject">👁️ Попередній перегляд</button>
+                    </div>
+                    <div class="modal-footer-right">
+                        <button type="button" class="btn-secondary" data-close-modal>Скасувати</button>
+                        <button type="submit" class="btn-primary" id="btnSaveProject">Зберегти проєкт</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LIVE CASE PREVIEW MODAL -->
+    <div id="previewModal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-box modal-lg preview-box">
+            <div class="modal-box-header">
+                <div>
+                    <span id="previewCategory" class="preview-badge">Категорія</span>
+                    <h2 id="previewTitle" class="modal-box-title" style="margin-top: 4px;">Назва кейсу</h2>
+                </div>
+                <button type="button" class="btn-modal-close" data-close-modal>&times;</button>
+            </div>
+
+            <div class="preview-body">
+                <div class="preview-media-wrap">
+                    <img id="previewMediaImg" src="" alt="Case Preview" class="preview-main-img">
+                </div>
+                <div class="preview-case-sections" id="previewCaseSections">
+                    <!-- Dynamic sections -->
+                </div>
+            </div>
+
+            <div class="modal-box-footer" style="justify-content: space-between;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">✨ Це живий попередній перегляд того, як кейс буде виглядати на публічному сайті</span>
+                <button type="button" class="btn-secondary" data-close-modal>Закрити перегляд</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY MODAL -->
+    <div id="categoryModal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-box">
+            <div class="modal-box-header">
+                <h2 id="categoryModalTitle" class="modal-box-title">Створення категорії</h2>
+                <button type="button" class="btn-modal-close" data-close-modal>&times;</button>
+            </div>
+
+            <form id="categoryForm" class="modal-form">
+                <input type="hidden" id="categoryFormId">
+
+                <div class="form-group">
+                    <label for="categoryNameUa">Назва категорії (UA) *</label>
+                    <input type="text" id="categoryNameUa" required class="admin-input" placeholder="Брендинг & Пакування">
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryNameEn">Назва категорії (EN) *</label>
+                    <input type="text" id="categoryNameEn" required class="admin-input" placeholder="Branding & Packaging">
+                </div>
+
+                <div class="form-group">
+                    <label for="categorySlug">Slug (Ідентифікатор)</label>
+                    <input type="text" id="categorySlug" class="admin-input" placeholder="branding (автогенерація якщо пусто)">
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="categoryIsVisible" checked>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">Показувати категорію у фільтрах на сайті</span>
+                    </label>
+                </div>
+
+                <div class="modal-box-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Скасувати</button>
+                    <button type="submit" class="btn-primary" id="btnSaveCategory">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="passwordModal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal-backdrop"></div>
+        <div class="admin-modal-box">
+            <div class="modal-box-header">
+                <h2 class="modal-box-title">Зміна пароля адміністратора</h2>
+                <button type="button" class="btn-modal-close" data-close-modal>&times;</button>
+            </div>
+
+            <form id="passwordForm" class="modal-form">
+                <div class="form-group">
+                    <label for="currentPassword">Поточний пароль</label>
+                    <input type="password" id="currentPassword" required class="admin-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Новий пароль (мінімум 8 символів)</label>
+                    <input type="password" id="newPassword" required minlength="8" class="admin-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmNewPassword">Повторіть новий пароль</label>
+                    <input type="password" id="confirmNewPassword" required minlength="8" class="admin-input">
+                </div>
+
+                <div class="modal-box-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Скасувати</button>
+                    <button type="submit" class="btn-primary" id="btnSavePassword">Оновити пароль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
