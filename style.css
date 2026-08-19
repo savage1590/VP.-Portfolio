@@ -409,10 +409,11 @@ img {
 
 .hero-portrait-wrapper {
     position: absolute;
-    top: 14%;
-    left: 16%;
-    width: 62%;
-    height: 86%;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(88vw, 720px);
+    height: 76%;
     z-index: 3;
     display: flex;
     align-items: flex-end;
@@ -423,7 +424,7 @@ img {
 .hero-portrait {
     height: 100%;
     width: auto;
-    max-width: none;
+    max-width: 100%;
     object-fit: contain;
     object-position: bottom center;
     filter: drop-shadow(0 20px 40px rgba(58, 53, 50, 0.16));
@@ -434,14 +435,14 @@ img {
     position: relative;
     z-index: 6;
     width: 100%;
-    height: clamp(190px, 24vh, 250px);
-    background: rgba(237, 227, 211, 0.42);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background: rgba(237, 227, 211, 0.65);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
     border-top: 1.5px solid rgba(255, 255, 255, 0.75);
-    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
+    padding: 24px 0 20px 0;
 }
 
 .hero-glass-container {
@@ -452,26 +453,33 @@ img {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 48px;
+    gap: 36px;
+}
+
+.hero-glass-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .hero-badge-tag {
-    display: block;
+    display: inline-block;
     font-family: var(--font-body);
-    font-size: clamp(0.75rem, 1vw, 0.92rem);
+    font-size: clamp(0.72rem, 0.9vw, 0.88rem);
     font-weight: 700;
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 4px;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
 }
 
 .hero-port-folio {
     font-family: var(--font-heading);
-    font-size: clamp(3.6rem, 7.5vw, 6.5rem);
+    font-size: clamp(2.6rem, 5.2vw, 4.4rem);
     font-weight: 900;
-    line-height: 0.84;
-    letter-spacing: -0.035em;
+    line-height: 0.88;
+    letter-spacing: -0.03em;
     color: var(--color-text);
     text-transform: uppercase;
     margin: 0;
@@ -480,28 +488,28 @@ img {
 .hero-glass-divider {
     height: 2px;
     background-color: var(--color-text);
-    opacity: 0.9;
+    opacity: 0.6;
     width: 100%;
     margin: 0 10px;
 }
 
 .hero-slogan {
     font-family: var(--font-body);
-    line-height: 1.2;
+    line-height: 1.25;
     color: var(--color-text);
     text-align: left;
     white-space: nowrap;
 }
 
 .hero-slogan-lead {
-    font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+    font-size: clamp(1rem, 1.35vw, 1.3rem);
     font-weight: 400;
     display: inline-block;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 
 .hero-slogan-bold {
-    font-size: clamp(1.25rem, 1.85vw, 1.6rem);
+    font-size: clamp(1.05rem, 1.45vw, 1.4rem);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.01em;
@@ -1804,7 +1812,7 @@ img {
         display: none;
     }
     .hero-port-folio {
-        font-size: 3.2rem;
+        font-size: clamp(2.2rem, 9.5vw, 3.2rem);
     }
     .hero-stamp-wrapper {
         display: none;
