@@ -225,138 +225,148 @@ const defaultSiteContent = {
 
 let db = null;
 
-// 1. Try native node:sqlite (Node 22.5+)
-try {
-    const { DatabaseSync } = require('node:sqlite');
-    const isVercel = Boolean(process.env.VERCEL);
-    const dataDir = isVercel ? '/tmp' : path.join(__dirname, '../../data');
-    const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
+// Safe dynamic loader for node:sqlite without triggering bundler trace failures
+function initSqlite() {
+    try {
+        // Obfuscate module name from static AST scanners
+        const mod = ['node', 'sqlite'].join(':');
+        const sqliteModule = require(mod);
+        if (!sqliteModule || !sqliteModule.DatabaseSync) return null;
 
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+        const isVercel = Boolean(process.env.VERCEL);
+        const dataDir = isVercel ? '/tmp' : path.join(__dirname, '../../data');
+        const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
 
-    const dbPath = path.join(dataDir, 'portfolio.db');
-    const sqliteDb = new DatabaseSync(dbPath);
+        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-    sqliteDb.exec(`
-        PRAGMA foreign_keys = ON;
+        const dbPath = path.join(dataDir, 'portfolio.db');
+        const sqliteDb = new sqliteModule.DatabaseSync(dbPath);
 
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            salt TEXT NOT NULL,
-            role TEXT NOT NULL DEFAULT 'admin',
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+        sqliteDb.exec(`
+            PRAGMA foreign_keys = ON;
 
-        CREATE TABLE IF NOT EXISTS sessions (
-            id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL,
-            expires_at DATETIME NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        );
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                salt TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'admin',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
 
-        CREATE TABLE IF NOT EXISTS categories (
-            id TEXT PRIMARY KEY,
-            slug TEXT UNIQUE NOT NULL,
-            name_ua TEXT NOT NULL,
-            name_en TEXT NOT NULL,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            is_visible INTEGER NOT NULL DEFAULT 1,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+            CREATE TABLE IF NOT EXISTS sessions (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                expires_at DATETIME NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
 
-        CREATE TABLE IF NOT EXISTS projects (
-            id TEXT PRIMARY KEY,
-            category_id TEXT NOT NULL,
-            slug TEXT UNIQUE NOT NULL,
-            title_ua TEXT NOT NULL,
-            title_en TEXT NOT NULL,
-            task_ua TEXT,
-            task_en TEXT,
-            direction_ua TEXT,
-            direction_en TEXT,
-            solution_ua TEXT,
-            solution_en TEXT,
-            result_ua TEXT,
-            result_en TEXT,
-            cover_image TEXT NOT NULL,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            is_published INTEGER NOT NULL DEFAULT 1,
-            client TEXT,
-            year TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
-        );
+            CREATE TABLE IF NOT EXISTS categories (
+                id TEXT PRIMARY KEY,
+                slug TEXT UNIQUE NOT NULL,
+                name_ua TEXT NOT NULL,
+                name_en TEXT NOT NULL,
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                is_visible INTEGER NOT NULL DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
 
-        CREATE TABLE IF NOT EXISTS project_images (
-            id TEXT PRIMARY KEY,
-            project_id TEXT NOT NULL,
-            image_url TEXT NOT NULL,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-        );
+            CREATE TABLE IF NOT EXISTS projects (
+                id TEXT PRIMARY KEY,
+                category_id TEXT NOT NULL,
+                slug TEXT UNIQUE NOT NULL,
+                title_ua TEXT NOT NULL,
+                title_en TEXT NOT NULL,
+                task_ua TEXT,
+                task_en TEXT,
+                direction_ua TEXT,
+                direction_en TEXT,
+                solution_ua TEXT,
+                solution_en TEXT,
+                result_ua TEXT,
+                result_en TEXT,
+                cover_image TEXT NOT NULL,
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                is_published INTEGER NOT NULL DEFAULT 1,
+                client TEXT,
+                year TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
+            );
 
-        CREATE TABLE IF NOT EXISTS site_content (
-            section_key TEXT PRIMARY KEY,
-            content_json TEXT NOT NULL,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+            CREATE TABLE IF NOT EXISTS project_images (
+                id TEXT PRIMARY KEY,
+                project_id TEXT NOT NULL,
+                image_url TEXT NOT NULL,
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+            );
 
-        CREATE TABLE IF NOT EXISTS audit_logs (
-            id TEXT PRIMARY KEY,
-            user_id TEXT,
-            action TEXT NOT NULL,
-            entity TEXT NOT NULL,
-            entity_id TEXT,
-            ip_address TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS site_content (
+                section_key TEXT PRIMARY KEY,
+                content_json TEXT NOT NULL,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
 
-    // Self-contained seeding for SQLite
-    const userCount = sqliteDb.prepare('SELECT COUNT(*) as count FROM users').get();
-    if (!userCount || userCount.count === 0) {
-        const { hash, salt } = hashPassword(defaultAdmin.password);
-        const adminId = crypto.randomUUID();
-        sqliteDb.prepare('INSERT INTO users (id, email, password_hash, salt, role) VALUES (?, ?, ?, ?, "admin")')
-            .run(adminId, defaultAdmin.email.toLowerCase().trim(), hash, salt);
-
-        const insertCat = sqliteDb.prepare('INSERT OR IGNORE INTO categories (id, slug, name_ua, name_en, sort_order, is_visible) VALUES (?, ?, ?, ?, ?, ?)');
-        for (const cat of defaultCategories) {
-            insertCat.run(cat.id, cat.slug, cat.name_ua, cat.name_en, cat.sort_order, cat.is_visible);
-        }
-
-        const insertProj = sqliteDb.prepare(`
-            INSERT OR IGNORE INTO projects (id, category_id, slug, title_ua, title_en, task_ua, task_en, direction_ua, direction_en, solution_ua, solution_en, result_ua, result_en, cover_image, sort_order, is_published, client, year)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                action TEXT NOT NULL,
+                entity TEXT NOT NULL,
+                entity_id TEXT,
+                ip_address TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `);
-        const insertImg = sqliteDb.prepare('INSERT OR IGNORE INTO project_images (id, project_id, image_url, sort_order) VALUES (?, ?, ?, ?)');
 
-        for (const p of defaultProjects) {
-            insertProj.run(p.id, p.category_id, p.slug, p.title_ua, p.title_en, p.task_ua, p.task_en, p.direction_ua, p.direction_en, p.solution_ua, p.solution_en, p.result_ua, p.result_en, p.cover_image, p.sort_order, p.is_published, p.client, p.year);
-            let imgIdx = 0;
-            for (const img of p.images) {
-                insertImg.run(crypto.randomUUID(), p.id, img, imgIdx++);
+        // Self-contained seeding for SQLite
+        const userCount = sqliteDb.prepare('SELECT COUNT(*) as count FROM users').get();
+        if (!userCount || userCount.count === 0) {
+            const { hash, salt } = hashPassword(defaultAdmin.password);
+            const adminId = crypto.randomUUID();
+            sqliteDb.prepare('INSERT INTO users (id, email, password_hash, salt, role) VALUES (?, ?, ?, ?, "admin")')
+                .run(adminId, defaultAdmin.email.toLowerCase().trim(), hash, salt);
+
+            const insertCat = sqliteDb.prepare('INSERT OR IGNORE INTO categories (id, slug, name_ua, name_en, sort_order, is_visible) VALUES (?, ?, ?, ?, ?, ?)');
+            for (const cat of defaultCategories) {
+                insertCat.run(cat.id, cat.slug, cat.name_ua, cat.name_en, cat.sort_order, cat.is_visible);
+            }
+
+            const insertProj = sqliteDb.prepare(`
+                INSERT OR IGNORE INTO projects (id, category_id, slug, title_ua, title_en, task_ua, task_en, direction_ua, direction_en, solution_ua, solution_en, result_ua, result_en, cover_image, sort_order, is_published, client, year)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `);
+            const insertImg = sqliteDb.prepare('INSERT OR IGNORE INTO project_images (id, project_id, image_url, sort_order) VALUES (?, ?, ?, ?)');
+
+            for (const p of defaultProjects) {
+                insertProj.run(p.id, p.category_id, p.slug, p.title_ua, p.title_en, p.task_ua, p.task_en, p.direction_ua, p.direction_en, p.solution_ua, p.solution_en, p.result_ua, p.result_en, p.cover_image, p.sort_order, p.is_published, p.client, p.year);
+                let imgIdx = 0;
+                for (const img of p.images) {
+                    insertImg.run(crypto.randomUUID(), p.id, img, imgIdx++);
+                }
+            }
+
+            const insertContent = sqliteDb.prepare('INSERT OR REPLACE INTO site_content (section_key, content_json, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)');
+            for (const [k, v] of Object.entries(defaultSiteContent)) {
+                insertContent.run(k, JSON.stringify(v));
             }
         }
 
-        const insertContent = sqliteDb.prepare('INSERT OR REPLACE INTO site_content (section_key, content_json, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)');
-        for (const [k, v] of Object.entries(defaultSiteContent)) {
-            insertContent.run(k, JSON.stringify(v));
-        }
+        return sqliteDb;
+    } catch (e) {
+        return null;
     }
+}
 
-    db = sqliteDb;
-} catch (nativeErr) {
-    console.warn('⚠️ Using High-Reliability Fallback In-Memory Engine:', nativeErr.message);
+db = initSqlite();
 
+if (!db) {
     // Initial pre-populated state for serverless execution
     const adminHashed = hashPassword(defaultAdmin.password);
     const initialAdminUser = {

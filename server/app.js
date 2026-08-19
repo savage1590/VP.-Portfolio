@@ -41,11 +41,11 @@ app.use(express.static(rootDir));
 
 // API Routes
 const { requireAdmin } = require('./middleware/auth');
-app.use('/api/auth', authRoutes);
-app.use('/api/categories', categoriesRoutes);
-app.use('/api/projects', projectsRoutes);
-app.use('/api/content', contentRoutes);
-app.use('/api/public', publicRoutes);
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/categories', '/categories'], categoriesRoutes);
+app.use(['/api/projects', '/projects'], projectsRoutes);
+app.use(['/api/content', '/content'], contentRoutes);
+app.use(['/api/public', '/public'], publicRoutes);
 
 // Database Backup Download Endpoint (Admin Only)
 app.get('/api/backup', requireAdmin, (req, res) => {
