@@ -409,11 +409,10 @@ img {
 
 .hero-portrait-wrapper {
     position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(88vw, 720px);
-    height: 76%;
+    top: 14%;
+    left: 16%;
+    width: 62%;
+    height: 86%;
     z-index: 3;
     display: flex;
     align-items: flex-end;
@@ -424,7 +423,7 @@ img {
 .hero-portrait {
     height: 100%;
     width: auto;
-    max-width: 100%;
+    max-width: none;
     object-fit: contain;
     object-position: bottom center;
     filter: drop-shadow(0 20px 40px rgba(58, 53, 50, 0.16));
@@ -435,14 +434,15 @@ img {
     position: relative;
     z-index: 6;
     width: 100%;
-    background: rgba(237, 227, 211, 0.65);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    min-height: 190px;
+    background: rgba(237, 227, 211, 0.42);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
     border-top: 1.5px solid rgba(255, 255, 255, 0.75);
-    box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
     display: flex;
     align-items: center;
-    padding: 24px 0 20px 0;
+    padding: 16px 0;
 }
 
 .hero-glass-container {
@@ -453,7 +453,7 @@ img {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 36px;
+    gap: 48px;
 }
 
 .hero-glass-left {
@@ -463,9 +463,9 @@ img {
 }
 
 .hero-badge-tag {
-    display: inline-block;
+    display: block;
     font-family: var(--font-body);
-    font-size: clamp(0.72rem, 0.9vw, 0.88rem);
+    font-size: clamp(0.75rem, 0.95vw, 0.9rem);
     font-weight: 700;
     color: var(--color-accent);
     text-transform: uppercase;
@@ -476,10 +476,10 @@ img {
 
 .hero-port-folio {
     font-family: var(--font-heading);
-    font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+    font-size: clamp(3.2rem, 6.4vw, 5.5rem);
     font-weight: 900;
-    line-height: 0.88;
-    letter-spacing: -0.03em;
+    line-height: 0.84;
+    letter-spacing: -0.035em;
     color: var(--color-text);
     text-transform: uppercase;
     margin: 0;
@@ -488,28 +488,28 @@ img {
 .hero-glass-divider {
     height: 2px;
     background-color: var(--color-text);
-    opacity: 0.6;
+    opacity: 0.9;
     width: 100%;
     margin: 0 10px;
 }
 
 .hero-slogan {
     font-family: var(--font-body);
-    line-height: 1.25;
+    line-height: 1.2;
     color: var(--color-text);
     text-align: left;
     white-space: nowrap;
 }
 
 .hero-slogan-lead {
-    font-size: clamp(1rem, 1.35vw, 1.3rem);
+    font-size: clamp(1.1rem, 1.6vw, 1.45rem);
     font-weight: 400;
     display: inline-block;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .hero-slogan-bold {
-    font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+    font-size: clamp(1.2rem, 1.75vw, 1.55rem);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.01em;
