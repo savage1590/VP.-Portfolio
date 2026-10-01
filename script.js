@@ -116,7 +116,7 @@ const translations = {
         hero_role_badge: "Digital & Marketing Designer",
         hero_title_lead: "Владислав Проценко",
         hero_slogan_1: "Упаковую продукти для digital-середовища,",
-        hero_slogan_2: "ЩОБ ПОЯСНИТИ<br>ЦІННІСТЬ І ВЕСТИ<br>ДО ДІЇ.",
+        hero_slogan_2: "ЩОБ ПОКАЗАТИ<br>ЦІННІСТЬ ТА ДОВЕСТИ<br>ДО ПРОДАЖУ.",
 
         ticker_text: "[landing_pages] • [pitch_decks] • [performance_creatives] • [e-commerce] • [ai_visuals] • ",
 
@@ -399,10 +399,15 @@ function initCustomCursor() {
     const follower = document.querySelector(".custom-cursor-follower");
     if (!cursor || !follower) return;
 
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!finePointer.matches || reduceMotion.matches) return;
+
     let mouseX = 0, mouseY = 0;
     let followerX = 0, followerY = 0;
 
     document.addEventListener("mousemove", (e) => {
+        document.body.classList.add("cursor-ready");
         mouseX = e.clientX;
         mouseY = e.clientY;
         cursor.style.left = `${mouseX}px`;
@@ -421,14 +426,19 @@ function initCustomCursor() {
     const hoverElements = document.querySelectorAll("a, button, .portfolio-item, .faq-question, .service-card, .metric-card");
     hoverElements.forEach(el => {
         el.addEventListener("mouseenter", () => {
-            follower.style.transform = "translate(-50%, -50%) scale(1.4)";
-            follower.style.borderColor = "var(--color-accent)";
+            cursor.classList.add("is-interactive");
+            follower.classList.add("is-interactive");
+            if (el.matches(".portfolio-item, .service-card, .metric-card")) {
+                follower.classList.add("is-card");
+            }
         });
         el.addEventListener("mouseleave", () => {
-            follower.style.transform = "translate(-50%, -50%) scale(1)";
-            follower.style.borderColor = "rgba(229, 128, 19, 0.5)";
+            cursor.classList.remove("is-interactive");
+            follower.classList.remove("is-interactive", "is-card");
         });
     });
+
+    document.addEventListener("mouseleave", () => document.body.classList.remove("cursor-ready"));
 }
 
 // Header background change on scroll

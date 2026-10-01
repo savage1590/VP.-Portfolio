@@ -188,7 +188,7 @@ function seedDatabase() {
             role_badge_en: 'Digital & Marketing Designer',
             slogan_1_ua: 'Упаковую продукти для digital-середовища,',
             slogan_1_en: 'Packaging products for digital environments,',
-            slogan_2_ua: 'ЩОБ ПОЯСНИТИ ЦІННІСТЬ І ВЕСТИ ДО ДІЇ.',
+            slogan_2_ua: 'ЩОБ ПОКАЗАТИ ЦІННІСТЬ ТА ДОВЕСТИ ДО ПРОДАЖУ.',
             slogan_2_en: 'TO MAKE THEIR VALUE CLEAR AND LEAD PEOPLE TO ACT.'
         },
         contacts: {

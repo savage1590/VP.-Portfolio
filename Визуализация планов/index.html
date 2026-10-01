@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дашборд Дизайнера: Контент-система & Робочі плани</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #121826;
+      --card-border: #1e293b;
+      --card-hover: #182235;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --neon-cyan: #06b6d4;
+      --neon-pink: #ec4899;
+      --neon-green: #10b981;
+      --neon-amber: #f59e0b;
+      --neon-purple: #a855f7;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border-radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(18, 24, 38, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 28px;
+    }
+
+    .header-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .logo-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: #0f172a;
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 15px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* STATS SUMMARY BAR */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .stat-card.cyan::after { background: var(--neon-cyan); }
+    .stat-card.pink::after { background: var(--neon-pink); }
+    .stat-card.green::after { background: var(--neon-green); }
+    .stat-card.amber::after { background: var(--neon-amber); }
+
+    .stat-info h3 {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .stat-info .stat-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 999px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .stat-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #06b6d4);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* ACTION & FILTER BAR */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      padding: 14px 18px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--card-border);
+    }
+
+    .filters-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 13px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover {
+      color: var(--text-main);
+      border-color: #334155;
+    }
+
+    .filter-chip.active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent);
+      color: #818cf8;
+    }
+
+    .search-input {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      min-width: 240px;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 14px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* REELS GRID & WEEKS */
+    .weeks-container {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .week-block {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 22px;
+    }
+
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .week-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .week-title h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .week-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      background: #1e293b;
+      border-radius: 20px;
+      color: var(--neon-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .week-progress {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    /* REEL CARD */
+    .reel-card {
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .reel-card:hover {
+      border-color: #334155;
+      background: #101728;
+      transform: translateY(-2px);
+    }
+
+    .reel-card.completed {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.03);
+    }
+
+    .reel-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .reel-number-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(99, 102, 241, 0.12);
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .rubric-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-align: right;
+    }
+
+    .rubric-tag.water { background: rgba(6, 182, 212, 0.15); color: #38bdf8; }
+    .rubric-tag.notice { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .rubric-tag.brief { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+    .rubric-tag.microscope { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .rubric-tag.inside { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .rubric-tag.life { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+    .reel-theme {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.35;
+      color: var(--text-main);
+    }
+
+    .reel-hook {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 12px;
+      font-style: italic;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 2px solid var(--accent);
+    }
+
+    .reel-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .reel-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .reel-checkbox-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--neon-green);
+      cursor: pointer;
+    }
+
+    .btn-view-script {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-view-script:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border-color: #475569;
+    }
+
+    /* STORIES TAB STYLING */
+    .stories-schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .story-day-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .story-day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .story-day-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+    }
+
+    .story-day-focus {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .story-structure-box {
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+    }
+
+    /* KANBAN TASKS */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .work-column {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      min-height: 480px;
+    }
+
+    .column-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .column-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .column-count {
+      background: #1e293b;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .task-card {
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+      transition: all 0.2s;
+    }
+
+    .task-card:hover {
+      border-color: #334155;
+      background: #101728;
+    }
+
+    .task-card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .task-card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .task-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .task-tag {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: var(--neon-cyan);
+    }
+
+    .task-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .task-btn-move {
+      background: #1e293b;
+      border: none;
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .task-btn-move:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 860px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 28px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #1e293b;
+      border: none;
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .modal-close-btn:hover {
+      background: #334155;
+      color: white;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      padding-right: 36px;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .modal-body h4 {
+      font-size: 0.95rem;
+      color: var(--neon-cyan);
+      margin: 18px 0 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 4px;
+    }
+
+    .storyboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 12px 0 18px 0;
+      background: #090e1a;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .storyboard-table th, .storyboard-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: top;
+    }
+
+    .storyboard-table th {
+      background: #121a2d;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .storyboard-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .voiceover-box {
+      background: #0f172a;
+      border-left: 3px solid var(--accent);
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-style: italic;
+      color: #f1f5f9;
+      line-height: 1.6;
+    }
+
+    .info-card-box {
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .quick-notes-textarea {
+      width: 100%;
+      height: 200px;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+      outline: none;
+    }
+
+    .quick-notes-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 20px 28px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      main { padding: 16px; }
+      .header-container { flex-direction: column; align-items: stretch; }
+      .action-bar { flex-direction: column; align-items: stretch; }
+      .search-input { width: 100%; }
+      .modal-content { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-badge">VP</div>
+        <div class="logo-text">
+          <h1>Дашборд Дизайнера: Контент-система & Задачі</h1>
+          <p>Місячний план: 16 Reels, щоденні Stories & Робочий процес</p>
+        </div>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('tab-reels')">🎬 16 Reels на місяць</button>
+        <button class="nav-btn" onclick="switchTab('tab-stories')">📱 Щоденні Stories</button>
+        <button class="nav-btn" onclick="switchTab('tab-work')">💼 Робочі Завдання</button>
+        <button class="nav-btn" onclick="switchTab('tab-analytics')">📊 Аналітика & Банк Тем</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>Опубліковано Reels</h3>
+          <div class="stat-value"><span id="completed-reels-count">0</span> / 16</div>
+          <div class="stat-progress-bar">
+            <div class="stat-progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card cyan">
+        <div class="stat-info">
+          <h3>Залишилось зняти</h3>
+          <div class="stat-value" id="remaining-reels-count">16</div>
+          <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">4 ролики на тиждень</p>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-info">
+          <h3>Активні проєкти</h3>
+          <div class="stat-value" id="active-tasks-count">4</div>
+          <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">у розробці та на узгодженні</p>
+        </div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-info">
+          <h3>Формула успіху</h3>
+          <div class="stat-value" style="font-size: 1.1rem; font-weight: 700;">40% Охоплення / 30% Експертність</div>
+          <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">+ 20% Кейси + 10% Lifestyle</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: 16 REELS GRID -->
+    <div id="tab-reels" class="tab-content active">
+      <div class="action-bar">
+        <div class="filters-group">
+          <button class="filter-chip active" onclick="filterReels('all', this)">Всі рубрики</button>
+          <button class="filter-chip" onclick="filterReels('water', this)">🧠 Дизайн без води</button>
+          <button class="filter-chip" onclick="filterReels('notice', this)">👁️ Помічаю те, чого не помічають</button>
+          <button class="filter-chip" onclick="filterReels('brief', this)">🎭 Бриф, який пішов не туди</button>
+          <button class="filter-chip" onclick="filterReels('microscope', this)">🔬 Дизайн під мікроскопом</button>
+          <button class="filter-chip" onclick="filterReels('inside', this)">💼 Зсередини проєкту</button>
+          <button class="filter-chip" onclick="filterReels('life', this)">☕ Дизайн і життя</button>
+          <button class="filter-chip" onclick="filterReels('pending', this)">⏳ Треба зняти</button>
+          <button class="filter-chip" onclick="filterReels('done', this)">✅ Готово</button>
+        </div>
+        <input type="text" id="reels-search" class="search-input" placeholder="🔍 Пошук за темою, номером чи хуком..." oninput="searchReels()">
+      </div>
+
+      <div class="weeks-container" id="weeks-list">
+        <!-- Generated dynamically via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 2: STORIES DAILY SYSTEM -->
+    <div id="tab-stories" class="tab-content">
+      <div class="action-bar">
+        <h2 style="font-size: 1.1rem; font-weight: 700;">Щоденний розклад Stories (3–7 кадрів на день)</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Показуємо процес, особистість та живий бекстейдж</p>
+      </div>
+
+      <div class="stories-schedule-grid" id="stories-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <div class="info-card-box">
+        <h3 style="font-size: 1rem; color: var(--neon-cyan); margin-bottom: 12px;">🎨 Готові шаблони та сценарії Stories</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div style="background: #090e1a; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--neon-amber);">1. A/B голосування:</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">«Який варіант сильніший?» ➔ стікер голосування ➔ через кілька годин розбір свого вибору з аргументами.</p>
+          </div>
+          <div style="background: #090e1a; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--neon-pink);">2. Work in Progress:</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">«Поки виглядає сиро, але зараз покажу, куди це йде» ➔ запис екрана Figma ➔ чистий результат.</p>
+          </div>
+          <div style="background: #090e1a; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--neon-cyan);">3. Розбір помилки:</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Один фрагмент макета ➔ «бачиш проблему?» ➔ правильне рішення у наступній сторіз.</p>
+          </div>
+          <div style="background: #090e1a; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--neon-green);">4. М'який продаж:</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Кейс ➔ задача ➔ результат ➔ «якщо потрібна схожа задача для вашого бренду — пишіть у Direct».</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: WORK TASKS KANBAN -->
+    <div id="tab-work" class="tab-content">
+      <div class="action-bar">
+        <h2 style="font-size: 1.1rem; font-weight: 700;">Канбан робочих завдань та клієнтських проєктів</h2>
+        <button class="btn-primary" onclick="openAddTaskModal()">+ Додати завдання</button>
+      </div>
+
+      <div class="work-grid">
+        <div class="work-column">
+          <div class="column-header">
+            <h3>⏳ В черзі / Беклог</h3>
+            <span class="column-count" id="count-todo">0</span>
+          </div>
+          <div class="task-list" id="col-todo"></div>
+        </div>
+
+        <div class="work-column">
+          <div class="column-header">
+            <h3>⚡ В роботі</h3>
+            <span class="column-count" id="count-inprogress">0</span>
+          </div>
+          <div class="task-list" id="col-inprogress"></div>
+        </div>
+
+        <div class="work-column">
+          <div class="column-header">
+            <h3>👀 На узгодженні з клієнтом</h3>
+            <span class="column-count" id="count-review">0</span>
+          </div>
+          <div class="task-list" id="col-review"></div>
+        </div>
+
+        <div class="work-column">
+          <div class="column-header">
+            <h3>✅ Завершено</h3>
+            <span class="column-count" id="count-done">0</span>
+          </div>
+          <div class="task-list" id="col-done"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: ANALYTICS & IDEAS BANK -->
+    <div id="tab-analytics" class="tab-content">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+        
+        <div class="info-card-box">
+          <h3 style="font-size: 1rem; color: var(--neon-cyan); margin-bottom: 12px;">⚡ Формула сильного Reels</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+            <li><strong style="color: var(--neon-pink);">0–2 сек:</strong> HOOK — питання, конфлікт або готовий результат.</li>
+            <li><strong style="color: var(--neon-amber);">2–5 сек:</strong> PATTERN INTERRUPT — зміна плану, об'єкт, мем чи zoom.</li>
+            <li><strong style="color: var(--neon-cyan);">5–20 сек:</strong> VALUE / CONFLICT — розкриття однієї головної думки.</li>
+            <li><strong style="color: var(--neon-green);">20–27 сек:</strong> PAYOFF — результат, before/after, punchline або висновок.</li>
+            <li><strong style="color: var(--accent);">27–35 сек:</strong> CTA — конкретна дія (коментар, репост, Direct).</li>
+          </ul>
+        </div>
+
+        <div class="info-card-box">
+          <h3 style="font-size: 1rem; color: var(--neon-green); margin-bottom: 12px;">💡 Банк наступних тем (15 ідей)</h3>
+          <ul style="list-style: square; padding-left: 20px; font-size: 0.82rem; line-height: 1.6; color: #cbd5e1;">
+            <li>Чому красивий дизайн іноді не працює</li>
+            <li>Як зрозуміти, що клієнт сам не знає, чого хоче</li>
+            <li>3 ознаки поганого ТЗ</li>
+            <li>Чому дизайнеру не потрібен мільйон програм</li>
+            <li>Що я завжди перевіряю перед здачею макета</li>
+            <li>Чому референс не можна просто копіювати</li>
+            <li>Як зрозуміти, де в макеті головний елемент</li>
+            <li>Що відбувається, коли клієнт каже: «давайте ще варіант»</li>
+            <li>Я попросив AI покращити мій дизайн — ось що вийшло</li>
+            <li>5 речей, які я перевіряю в типографіці</li>
+            <li>Чому мінімалізм — це не порожній екран</li>
+            <li>Що робити, якщо клієнту не подобається дизайн</li>
+            <li>Різниця між «красиво» та «вирішує задачу»</li>
+          </ul>
+        </div>
+
+        <div class="info-card-box" style="grid-column: 1 / -1;">
+          <h3 style="font-size: 1rem; color: var(--neon-amber); margin-bottom: 8px;">📝 Швидкі робочі нотатки</h3>
+          <textarea id="quick-notes" class="quick-notes-textarea" placeholder="Записуй сюди думки, ідеї для нових скетчів, референси, посилання... Вони зберігаються автоматично!" oninput="saveQuickNotes()"></textarea>
+          <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 6px;">💾 Автозбереження у пам'ять браузера (localStorage)</p>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL FOR SCRIPT DETAILS -->
+  <div class="modal-overlay" id="script-modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeModal(null)">✕</button>
+      <h3 class="modal-title" id="modal-title">Деталі Reels</h3>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL FOR ADDING TASK -->
+  <div class="modal-overlay" id="add-task-modal" onclick="closeAddTaskModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 480px;">
+      <button class="modal-close-btn" onclick="closeAddTaskModal(null)">✕</button>
+      <h3 class="modal-title">Додати нову задачу</h3>
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted);">Назва задачі / Клієнт:</label>
+          <input type="text" id="new-task-title" class="search-input" style="width: 100%; margin-top: 4px;" placeholder="Напр: 5 креативів для бренду свічок">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted);">Опис / Деталі:</label>
+          <textarea id="new-task-desc" class="search-input" style="width: 100%; height: 80px; margin-top: 4px; resize: none;" placeholder="Ключові вимоги, дедлайн, посилання на референси..."></textarea>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted);">Тег (категорія):</label>
+          <input type="text" id="new-task-tag" class="search-input" style="width: 100%; margin-top: 4px;" placeholder="Напр: Креативи, Айдентика, Reels, Профіль">
+        </div>
+        <button class="btn-primary" style="justify-content: center; margin-top: 8px;" onclick="saveNewTask()">Створити завдання</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>⚡ Візуалізатор планів & контент-системи | Графічний дизайн & AI | Серпень 2026</p>
+  </footer>
+
+  <script>
+    // 16 REELS DATABASE IN PURE UKRAINIAN
+    const reelsPlan = [
+      // WEEK 1
+      {
+        num: 1, week: 1, dayName: 'Понеділок', rubricKey: 'water', rubricName: 'Дизайн без води',
+        title: 'Чому дизайн виглядає дешево',
+        hook: '«Іноді дизайн виглядає дешево не тому, що дизайнер поганий.»',
+        task: 'Охоплення', style: 'Зухвалий експертний ролик; split-screen, велика типографіка, червоні X на помилках.',
+        cta: '«Збережи, якщо теж іноді хочеться просто все прибрати.»',
+        transcript: '00:00–00:03 — «То чому ж твій дизайн виглядає дешево? Іноді дизайн виглядає дешево не тому, що дизайнер поганий.»\n00:03–00:06 — «А тому, що він намагається зробити його занадто красивим.»\n00:06–00:11 — «Тіні.»\n00:11–00:15 — «Градієнти.»\n00:15–00:19 — «П\'ять різних шрифтів.»\n00:19–00:24 — «І ще ось це все.»\n00:24–00:30 — «А потім прибираємо половину. І раптово дизайн почав виглядати дорожче.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Обличчя крупним планом', edit: 'Різкий zoom + великий caption' },
+          { time: '3–6 с', action: '«занадто красивим»', visual: 'Перевантажений макет', edit: 'Швидка перебивка' },
+          { time: '6–11 с', action: '«Тіні»', visual: 'Показуємо тінь', edit: 'Червоний хрестик X' },
+          { time: '11–15 с', action: '«Градієнти»', visual: 'Показуємо градієнт', edit: 'Червоний хрестик X' },
+          { time: '15–19 с', action: '«5 шрифтів»', visual: 'Хаотичний набір шрифтів', edit: 'Нашарування' },
+          { time: '19–24 с', action: '«І ще ось це все»', visual: 'Загальний перевантажений екран', edit: 'Прискорення' },
+          { time: '24–30 с', action: 'Before → After', visual: 'Чистий фінальний дизайн', edit: 'Зняття елементів по одному' }
+        ]
+      },
+      {
+        num: 2, week: 1, dayName: 'Середа', rubricKey: 'notice', rubricName: 'Помічаю те, чого не помічають',
+        title: 'Коли ти просто хотів випити кави',
+        hook: '«Чому дизайнер помічає те, чого інші не бачать.»',
+        task: 'Репости', style: 'POV / влог, натуральний інтершум, легка комічна музика.',
+        cta: '«Надішли дизайнеру, який теж уже не вміє це "розбачити".»',
+        transcript: '«О, прикольна кав\'ярня.»\n«Стоп.»\n«Чому тут три різні шрифти?»\n«Чому логотип вище центру?»\n«Чому ціна стоїть вдвічі ближче до назви, ніж до опису?»\n«Я просто кави хотів.»',
+        table: [
+          { time: '0–3 с', action: 'Заходиш у кав\'ярню', visual: 'POV / кружечок', edit: 'Натуральний звук' },
+          { time: '3–7 с', action: '«Стоп»', visual: 'Різко зупиняєшся', edit: 'Freeze frame' },
+          { time: '7–12 с', action: 'Три шрифти', visual: 'Крупний план меню', edit: 'Zoom на кожен шрифт' },
+          { time: '12–17 с', action: 'Логотип', visual: 'Вивіска', edit: 'Лінія центру' },
+          { time: '17–24 с', action: 'Відступи', visual: 'Меню', edit: 'Стрілки та розміри' },
+          { time: '24–30 с', action: '«Я просто кави хотів»', visual: 'Обличчя', edit: 'Комедійна пауза' }
+        ]
+      },
+      {
+        num: 3, week: 1, dayName: 'П\'ятниця', rubricKey: 'brief', rubricName: 'Бриф, який пішов не туди',
+        title: 'Зробіть красиво',
+        hook: '«Потрібно просто красиво.»',
+        task: 'Гумор / Вірусність', style: 'Скетч на двох персонажів. Камера та світло відрізняються між ролями.',
+        cta: '«Надішли це людині, яка пише ТЗ одним реченням.»',
+        transcript: 'Клієнт: «Потрібно просто красиво.»\nДизайнер: «Для кого?»\nКлієнт: «Ну... для людей.»\nДизайнер: «Яка ЦА?»\nКлієнт: «Звичайна.»\nДизайнер: «А конкуренти?»\nКлієнт: «Ну, конкуренти.»\nДизайнер: «Яка задача у дизайну?»\nКлієнт: «Ну щоб було красиво.»\nФінал: мовчазний погляд у камеру.',
+        table: [
+          { time: '0–4 с', action: 'Клієнт: «Потрібно красиво»', visual: 'Худі / кружка', edit: 'Субтитри крупно' },
+          { time: '4–8 с', action: 'Дизайнер: «Для кого?»', visual: 'Інший ракурс / одяг', edit: 'Shot-reverse-shot' },
+          { time: '8–16 с', action: 'ЦА', visual: 'Клієнт / дизайнер', edit: 'Склейки 1–2 сек' },
+          { time: '16–24 с', action: 'Конкуренти', visual: 'Той самий прийом', edit: 'Прискорення' },
+          { time: '24–31 с', action: 'Задача', visual: 'Дизайнер крупно', edit: 'Пауза' },
+          { time: '31–35 с', action: '«Щоб було красиво»', visual: 'Клієнт', edit: 'Різкий punch-in' },
+          { time: '35–38 с', action: 'Погляд у камеру', visual: 'Обличчя', edit: 'Тиша / німа пауза' }
+        ]
+      },
+      {
+        num: 4, week: 1, dayName: 'Неділя', rubricKey: 'inside', rubricName: 'Зсередини проєкту',
+        title: 'Переробляю старий дизайн',
+        hook: '«Я знайшов свій старий дизайн і тепер розумію, чому він мене так бісить.»',
+        task: 'Довіра / Процес', style: 'Кейс із чесною самокритикою; демонстрація екрана Figma.',
+        cta: '«Хочеш другу частину з ще одним старим проєктом?»',
+        transcript: '«Я знайшов свій старий дизайн і тепер розумію, чому він мене так бісить.»\n«Ось тут я взагалі не розумів, куди має дивитися людина.»\n«Тут занадто багато всього.»\n«А ось тут я просто намагався показати все, що вмію.»\n«Зараз я зробив би так.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Старий макет', edit: 'Zoom + caption' },
+          { time: '3–9 с', action: 'Нема точки фокусу', visual: 'Виділення зон', edit: 'Червоні стрілки' },
+          { time: '9–15 с', action: 'Занадто багато всього', visual: 'Обведення елементів', edit: 'X' },
+          { time: '15–21 с', action: 'Декоративність', visual: 'Старий екран', edit: 'Freeze' },
+          { time: '21–30 с', action: 'Нова версія', visual: 'Before → After', edit: 'Smooth reveal' }
+        ]
+      },
+
+      // WEEK 2
+      {
+        num: 5, week: 2, dayName: 'Понеділок', rubricKey: 'brief', rubricName: 'Бриф, який пішов не туди',
+        title: 'Хочу дорого',
+        hook: '«Хочу, щоб виглядало дорого.»',
+        task: 'Репости / Гумор', style: 'Скетч, суха міміка, швидкий монтаж.',
+        cta: '«Яка фраза клієнта у тебе викликає такий самий погляд?»',
+        transcript: 'Клієнт: «Хочу, щоб виглядало дорого.»\nДизайнер: «Що означає дорого?»\nКлієнт: «Ну... дорого.»\nДизайнер: «Мінімалізм?»\nКлієнт: «Так.»\nДизайнер: «Преміальна типографіка?»\nКлієнт: «Так.»\nДизайнер: «Стримана палітра?»\nКлієнт: «Так.»\nПауза.\nКлієнт: «І побільше всього.»\nПогляд дизайнера.',
+        table: [
+          { time: '0–5 с', action: 'Запит «Хочу дорого»', visual: 'Клієнт', edit: 'Крупний текст' },
+          { time: '5–12 с', action: 'Що значить дорого?', visual: 'Дизайнер', edit: 'Швидкі склейки' },
+          { time: '12–25 с', action: 'Три уточнення', visual: 'Два персонажі', edit: 'Shot-reverse-shot' },
+          { time: '25–30 с', action: '«І побільше всього»', visual: 'Клієнт', edit: 'Різкий zoom' },
+          { time: '30–33 с', action: 'Погляд', visual: 'Дизайнер', edit: 'Пауза' }
+        ]
+      },
+      {
+        num: 6, week: 2, dayName: 'Середа', rubricKey: 'water', rubricName: 'Дизайн без води',
+        title: 'Чому не можна використовувати 5 шрифтів',
+        hook: '«Якщо у твоєму макеті більше трьох шрифтів — давай поговоримо.»',
+        task: 'Збереження / Експертність', style: 'Експертний, візуально демонстративний.',
+        cta: '«Збережи перед наступним проєктом.»',
+        transcript: '«Якщо у твоєму макеті більше трьох шрифтів — давай поговоримо.»\n«Один шрифт — нормально.»\n«Два — нормально.»\n«Три — можливо.»\n«Чотири — вже тривожно.»\n«П\'ять — ми втратили контроль.»\n«Проблема не в кількості. Проблема у відсутності ролі для кожного шрифту.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Обличчя + макет', edit: 'Крупний caption' },
+          { time: '3–8 с', action: '1 шрифт', visual: 'Чистий макет', edit: 'Лічильник' },
+          { time: '8–13 с', action: '2 шрифти', visual: 'Макет', edit: 'Лічильник' },
+          { time: '13–18 с', action: '3 шрифти', visual: 'Макет', edit: 'Лічильник' },
+          { time: '18–23 с', action: '4 шрифти', visual: 'Хаос', edit: 'Тривожний zoom' },
+          { time: '23–28 с', action: '5 шрифтів', visual: 'Хаос', edit: 'Shake-ефект' },
+          { time: '28–34 с', action: 'Пояснення', visual: 'Правильний приклад', edit: 'Підсвічування ролей' }
+        ]
+      },
+      {
+        num: 7, week: 2, dayName: 'П\'ятниця', rubricKey: 'notice', rubricName: 'Помічаю те, чого не помічають',
+        title: '5 речей, які дратують',
+        hook: '«5 дизайнерських речей, які дратують мене на вулиці.»',
+        task: 'Репости / Вірусність', style: 'POV / влог, міські звуки + легка музика.',
+        cta: '«Надішли дизайнеру, який теж це помічає.»',
+        transcript: '«Перше — кривий кернінг.»\n«Друге — різні відступи.»\n«Третє — центрування "на око".»\n«Четверте — текст, приліплений до краю.»\n«П\'яте — логотип розміром з половину вивіски.»\n«Тепер ви теж будете це помічати. Вибачте.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Вулиця / вивіска', edit: 'Крупний заголовок' },
+          { time: '3–7 с', action: 'Кернінг', visual: 'Реальний приклад', edit: 'Підсвічування літер' },
+          { time: '7–11 с', action: 'Відступи', visual: 'Приклад', edit: 'Напрямні лінії' },
+          { time: '11–15 с', action: 'Центрування', visual: 'Приклад', edit: 'Центральна вісь' },
+          { time: '15–20 с', action: 'Текст біля краю', visual: 'Приклад', edit: 'Червона зона полів' },
+          { time: '20–25 с', action: 'Величезний логотип', visual: 'Вивіска', edit: 'Zoom' },
+          { time: '25–29 с', action: 'Фінал', visual: 'Обличчя', edit: 'Комедійна пауза' }
+        ]
+      },
+      {
+        num: 8, week: 2, dayName: 'Неділя', rubricKey: 'life', rubricName: 'Дизайн і життя',
+        title: 'Чому деякі бренди хочеться торкатися',
+        hook: '«Є пакування, яке забуваєш через секунду. А є те, яке хочеться торкатися.»',
+        task: 'Охоплення / Естетика', style: 'Преміальний, сенсорний, макро-зйомка поліграфії.',
+        cta: '«Збережи, якщо працюєш з пакуванням.»',
+        transcript: '«Мені доводиться працювати з пакуванням. І є пакування, яке ти відкриваєш і забуваєш за секунду.»\n«А є те, яке чомусь хочеться помацати.»\n«І справа не тільки в дизайні.»\n«Фактура, матовість, контраст матеріалів створюють тактильний досвід.»\n«І саме він може зробити бренд незабутнім.»',
+        table: [
+          { time: '0–5 с', action: 'Контраст двох пакувань', visual: 'Два пакування', edit: 'Split-screen' },
+          { time: '5–10 с', action: 'Тактильність', visual: 'Руки / поверхня', edit: 'Макро' },
+          { time: '10–18 с', action: 'Фактура', visual: 'Матеріал', edit: 'Slow macro' },
+          { time: '18–25 с', action: 'Мат / глянець', visual: 'Деталі', edit: 'Перебивки' },
+          { time: '25–33 с', action: 'Висновок', visual: 'Готове пакування', edit: 'Крупний текст' }
+        ]
+      },
+
+      // WEEK 3
+      {
+        num: 9, week: 3, dayName: 'Понеділок', rubricKey: 'microscope', rubricName: 'Дизайн під мікроскопом',
+        title: 'Чому цей дизайн працює',
+        hook: '«Чому цей дизайн працює, хоча здається простим.»',
+        task: 'Збереження / Експертність', style: 'Міні-лекція з розміткою реального візуалу.',
+        cta: '«Який дизайн розібрати наступним?»',
+        transcript: '«Чому цей дизайн працює, хоча здається простим?»\n«Перше — тут одразу зрозуміло, куди дивитися.»\n«Друге — колір не сперечається зі змістом.»\n«Третє — у кожного елемента є роль.»\n«Саме тому він виглядає простим. Хоча за цією простотою багато рішень.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Обраний дизайн', edit: 'Freeze' },
+          { time: '3–9 с', action: 'Фокус', visual: 'Розмітка', edit: 'Стрілка' },
+          { time: '9–15 с', action: 'Колір', visual: 'Палітра', edit: 'Swatches' },
+          { time: '15–22 с', action: 'Ролі елементів', visual: 'Сітка', edit: 'Підписи' },
+          { time: '22–30 с', action: 'Загальний результат', visual: 'Дизайн повністю', edit: 'Clean reveal' }
+        ]
+      },
+      {
+        num: 10, week: 3, dayName: 'Середа', rubricKey: 'water', rubricName: 'Дизайн без води',
+        title: '3 ознаки хорошого дизайнера',
+        hook: '«Хочеш зрозуміти, хороший ти дизайнер чи ні? Перевір ці 3 речі.»',
+        task: 'Експертність / Позиція', style: 'Спокійний, впевнений, експертний тон.',
+        cta: '«З яким пунктом ти згоден найбільше?»',
+        transcript: '«Перше — ти вмієш пояснити своє рішення.»\n«Друге — можеш відмовитися від красивого рішення, якщо воно не допомагає задачі.»\n«Третє — розумієш задачу бізнесу, а не тільки що треба зробити красиво чи дорого.»\n«Програма — інструмент. Мислення — професія.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Обличчя', edit: 'Крупний caption' },
+          { time: '3–10 с', action: 'Пункт 1', visual: 'Кейс / екран', edit: 'Нумерація' },
+          { time: '10–18 с', action: 'Пункт 2', visual: 'До / після', edit: 'X / галочка' },
+          { time: '18–26 с', action: 'Пункт 3', visual: 'Бриф / кейс', edit: 'Підсвічування' },
+          { time: '26–30 с', action: 'Фінал', visual: 'Обличчя', edit: 'Фраза крупно' }
+        ]
+      },
+      {
+        num: 11, week: 3, dayName: 'П\'ятниця', rubricKey: 'inside', rubricName: 'Зсередини проєкту',
+        title: 'Як я зробив цей дизайн за X годин',
+        hook: '«Я думав, цей дизайн займе два дні.»',
+        task: 'Довіра / Портфоліо', style: 'Швидкий case-study. Фінал у перші секунди й повтор у кінці.',
+        cta: '«Хочеш, розберу, чому перша версія не спрацювала?»',
+        transcript: '«Я думав, цей дизайн займе два дні.»\n«Спочатку розібрав задачу.»\n«Потім зібрав референси.»\n«Перша ідея не спрацювала.»\n«Переробив композицію.»\n«І ось фінал.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Фінальний результат', edit: 'Показуємо результат раніше за процес' },
+          { time: '3–7 с', action: 'Задача', visual: 'Бриф', edit: 'Screen recording' },
+          { time: '7–11 с', action: 'Референси', visual: 'Moodboard', edit: 'Fast scroll' },
+          { time: '11–16 с', action: 'Перша ідея', visual: 'Figma', edit: 'Cursor' },
+          { time: '16–21 с', action: 'Проблема', visual: 'Старий варіант', edit: 'X' },
+          { time: '21–27 с', action: 'Переробка', visual: 'Новий варіант', edit: 'Morph' },
+          { time: '27–32 с', action: 'Фінал', visual: 'Mockup', edit: 'Музичний акцент' }
+        ]
+      },
+      {
+        num: 12, week: 3, dayName: 'Неділя', rubricKey: 'life', rubricName: 'Дизайн і життя',
+        title: 'Що я зрозумів після перших проєктів',
+        hook: '«Я раніше думав, що дизайнер має вміти красиво малювати.»',
+        task: 'Лояльність / Довіра', style: 'Теплий lifestyle + voice-over; мінімум графіки.',
+        cta: '«Що ти зрозумів після перших проєктів?»',
+        transcript: '«Я раніше думав, що дизайнер має вміти красиво малювати.»\n«Потім зрозумів, що важливіше вміти думати.»\n«Потім — пояснювати.»\n«А потім зрозумів, що клієнт взагалі не зобов\'язаний розуміти дизайн так, як розумію його я.»\n«І ось тоді працювати стало значно простіше.»',
+        table: [
+          { time: '0–5 с', action: 'Стара робота', visual: 'Архів / перші проєкти', edit: 'Slow zoom' },
+          { time: '5–11 с', action: 'Думати', visual: 'Робочий процес', edit: 'B-roll' },
+          { time: '11–17 с', action: 'Пояснювати', visual: 'Зідзвон / презентація', edit: 'Cut' },
+          { time: '17–25 с', action: 'Клієнт', visual: 'Листування / макет', edit: 'Screen' },
+          { time: '25–32 с', action: 'Фінальний висновок', visual: 'Ти за роботою', edit: 'Спокійний кадр' }
+        ]
+      },
+
+      // WEEK 4
+      {
+        num: 13, week: 4, dayName: 'Понеділок', rubricKey: 'microscope', rubricName: 'Дизайн під мікроскопом',
+        title: 'Що тут було не так?',
+        hook: '«На перший погляд тут усе нормально.»',
+        task: 'Експертність / Залучення', style: 'Розбір із можливістю поставити на паузу і знайти помилку самостійно.',
+        cta: '«Знайшов усі три до пояснення?»',
+        transcript: '«На перший погляд тут усе нормально.»\n«Але ось тут немає головного об\'єкта.»\n«Тут занадто багато конкуруючих елементів.»\n«А CTA взагалі губиться.»\n«Після трьох змін композиція починає працювати.»',
+        table: [
+          { time: '0–3 с', action: 'Hook', visual: 'Старий дизайн', edit: 'Freeze' },
+          { time: '3–9 с', action: 'Немає головного', visual: 'Розмітка', edit: 'Червона зона' },
+          { time: '9–15 с', action: 'Конкуренція', visual: 'Розмітка', edit: 'Arrows' },
+          { time: '15–21 с', action: 'CTA', visual: 'Розмітка', edit: 'Zoom' },
+          { time: '21–30 с', action: 'Після', visual: 'Нова версія', edit: 'Step-by-step reveal' }
+        ]
+      },
+      {
+        num: 14, week: 4, dayName: 'Середа', rubricKey: 'brief', rubricName: 'Бриф, який пішов не туди',
+        title: 'Я тут трохи поправив',
+        hook: '«Я тут буквально трошечки поправив.»',
+        task: 'Репости / Гумор', style: 'Скетч із поступовим нарощуванням абсурду.',
+        cta: '«Якщо було — став 🫠 у коментарях.»',
+        transcript: 'Клієнт: «Я тут буквально трошечки поправив.»\n(Дизайнер відкриває файл)\n«Шрифти змінилися.»\n«Сітка зникла.»\n«Кольори змінилися.»\n«Логотип розтягнутий.»\nКлієнт: «Ну... трошечки.»\n(Фінал: «Трошечки.»)',
+        table: [
+          { time: '0–4 с', action: 'Фраза клієнта', visual: 'Клієнт', edit: 'Subtitle' },
+          { time: '4–9 с', action: 'Відкриття файлу', visual: 'Екран', edit: 'Record scratch' },
+          { time: '9–14 с', action: 'Шрифти', visual: 'Figma', edit: 'Червоний X' },
+          { time: '14–19 с', action: 'Сітка', visual: 'Figma', edit: 'Червоний X' },
+          { time: '19–24 с', action: 'Кольори', visual: 'Figma', edit: 'Червоний X' },
+          { time: '24–29 с', action: 'Логотип', visual: 'Розтягнутий логотип', edit: 'Zoom' },
+          { time: '29–33 с', action: '«Трошечки»', visual: 'Клієнт', edit: 'Тиша + погляд' }
+        ]
+      },
+      {
+        num: 15, week: 4, dayName: 'П\'ятниця', rubricKey: 'inside', rubricName: 'Зсередини проєкту',
+        title: 'Найкращий проєкт місяця',
+        hook: '«Проєкт, яким я реально задоволений.»',
+        task: 'Портфоліо / Заявки', style: 'Дуже швидкий естетичний showcase; 0.7–1.5 сек на кадр, мінімум тексту.',
+        cta: '«Ще проєкти — у профілі.»',
+        transcript: '«Проєкт, який я робив цього місяця, і яким я реально задоволений.»\n(Показуємо логотип)\n(Палітра)\n(Типографіка)\n(Носії)\n(Головний візуал)\n«Ще проєкти — у профілі.»',
+        table: [
+          { time: '0–2 с', action: 'Hook', visual: 'Фінальний hero', edit: 'Beat hit' },
+          { time: '2–4 с', action: 'Логотип', visual: 'Крупний логотип', edit: 'Cut' },
+          { time: '4–6 с', action: 'Палітра', visual: 'Swatches', edit: 'Slide' },
+          { time: '6–8 с', action: 'Типографіка', visual: 'Fonts', edit: 'Cut' },
+          { time: '8–11 с', action: 'Носії', visual: 'Mockups', edit: 'Fast cuts' },
+          { time: '11–14 с', action: 'Hero', visual: 'Головний візуал', edit: 'Slow zoom' },
+          { time: '14–16 с', action: 'CTA', visual: 'Профіль / проєкт', edit: 'Clean end' }
+        ]
+      },
+      {
+        num: 16, week: 4, dayName: 'Неділя', rubricKey: 'life', rubricName: 'Дизайн і життя',
+        title: 'Чому я взагалі цим займаюся',
+        hook: '«Я взагалі не збирався ставати дизайнером.»',
+        task: 'Емоційний зв\'язок / Лояльність', style: 'Найбільш особистий ролик місяця. Теплий, спокійний, без агресивних плашок.',
+        cta: '«Якщо цікаво спостерігати за шляхом — залишайся тут.»',
+        transcript: '«Я взагалі не збирався ставати дизайнером.»\n«Спочатку мені просто подобалося робити щось візуальне.»\n«Потім з\'явився перший проєкт.»\n«Потім перший клієнт.»\n«Потім проєкти стали серйознішими.»\n«І найсмішніше — я досі іноді думаю, що тільки почав.»',
+        table: [
+          { time: '0–4 с', action: 'Hook', visual: 'Ти / архів', edit: 'Voice-over' },
+          { time: '4–9 с', action: 'Початок', visual: 'Старі роботи', edit: 'Film-like cut' },
+          { time: '9–15 с', action: 'Перший проєкт', visual: 'Архів / скрін', edit: 'Slow pan' },
+          { time: '15–21 с', action: 'Перші клієнти', visual: 'Листування / робота', edit: 'Cut' },
+          { time: '21–28 с', action: 'Зараз', visual: 'Сучасні кейси', edit: 'Faster montage' },
+          { time: '28–34 с', action: 'Фінал', visual: 'Ти за роботою', edit: 'Тихий кінець' }
+        ]
+      }
+    ];
+
+    // STORIES SCHEDULE DATA
+    const storiesSchedule = [
+      { day: 'Понеділок', focus: 'Робочий старт', count: '3–5 сторіз', structure: 'Що роблю сьогодні ➔ шматок проєкту ➔ коротка думка ➔ питання/опитування' },
+      { day: 'Вівторок', focus: 'Міні-експертність', count: '3–6 сторіз', structure: 'Один екран дизайну ➔ «тут спеціально зробив X» ➔ пояснення ➔ слайдер/опитування' },
+      { day: 'Середа', focus: 'Особисте', count: '3–7 сторіз', structure: 'Робоче місце ➔ кава/прогулянка ➔ побутовий момент ➔ короткий висновок' },
+      { day: 'Четвер', focus: 'Інтерактив', count: '3–5 сторіз', structure: 'A/B варіант ➔ голосування ➔ результат ➔ пояснення, чому обрав саме цей варіант' },
+      { day: 'П\'ятниця', focus: 'Кейс', count: '4–7 сторіз', structure: 'Задача ➔ процес ➔ фрагмент ➔ фінал ➔ питання: «показати весь кейс?»' },
+      { day: 'Субота', focus: 'Lifestyle', count: '2–5 сторіз', structure: 'Життя без спроби чомусь повчати (хобі, місто, покупки, відпочинок)' },
+      { day: 'Неділя', focus: 'Прогрів тижня', count: '3–5 сторіз', structure: 'Що зроблено ➔ що готується ➔ тизер наступного проєкту/ролика ➔ CTA на реакцію' }
+    ];
+
+    // WORK TASKS
+    let workTasks = JSON.parse(localStorage.getItem('vp_work_tasks_v2')) || [
+      { id: 1, title: "Рекламний креатив для кав'ярні", desc: "Розробити 3 варіанти банерів з AI-фонами під зернову каву", tag: "Креативи", status: "inprogress" },
+      { id: 2, title: "Айдентика для бренду свічок", desc: "Підбір шрифтової пари та палітри кольорів", tag: "Айдентика", status: "todo" },
+      { id: 3, title: "Зйомка Reels 01 & 02", desc: "Підготувати реквізит, виставити світло, записати голос", tag: "Reels", status: "inprogress" },
+      { id: 4, title: "Оформлення кейсу в Portfolio", desc: "Експорт мокапів та підготовка опису проєкту", tag: "Портфоліо", status: "done" }
+    ];
+
+    let completedReels = JSON.parse(localStorage.getItem('vp_completed_reels')) || [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderReelsGrid();
+      renderStoriesSchedule();
+      renderWorkTasks();
+      updateStats();
+      loadQuickNotes();
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function renderReelsGrid(filterType = 'all', searchQuery = '') {
+      const container = document.getElementById('weeks-list');
+      container.innerHTML = '';
+
+      const weeks = [
+        { num: 1, title: 'Тиждень 1: Запуск і позиціонування', desc: 'Reels 01–04' },
+        { num: 2, title: 'Тиждень 2: Процес і спостереження', desc: 'Reels 05–08' },
+        { num: 3, title: 'Тиждень 3: Розбори та мислення', desc: 'Reels 09–12' },
+        { num: 4, title: 'Тиждень 4: Кейси та підсумки', desc: 'Reels 13–16' }
+      ];
+
+      weeks.forEach(w => {
+        let weekReels = reelsPlan.filter(r => r.week === w.num);
+
+        if (filterType !== 'all') {
+          if (filterType === 'pending') weekReels = weekReels.filter(r => !completedReels.includes(r.num));
+          else if (filterType === 'done') weekReels = weekReels.filter(r => completedReels.includes(r.num));
+          else weekReels = weekReels.filter(r => r.rubricKey === filterType);
+        }
+
+        if (searchQuery) {
+          weekReels = weekReels.filter(r => 
+            r.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            r.hook.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            r.rubricName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            r.num.toString().includes(searchQuery)
+          );
+        }
+
+        if (weekReels.length === 0) return;
+
+        const weekCompleted = reelsPlan.filter(r => r.week === w.num && completedReels.includes(r.num)).length;
+        const totalInWeek = reelsPlan.filter(r => r.week === w.num).length;
+
+        const weekBlock = document.createElement('div');
+        weekBlock.className = 'week-block';
+        weekBlock.innerHTML = `
+          <div class="week-header">
+            <div class="week-title">
+              <h2>${w.title}</h2>
+              <span class="week-badge">${w.desc}</span>
+            </div>
+            <div class="week-progress">${weekCompleted}/${totalInWeek} знято</div>
+          </div>
+          <div class="days-grid">
+            ${weekReels.map(r => `
+              <div class="reel-card ${completedReels.includes(r.num) ? 'completed' : ''}" id="card-reel-${r.num}">
+                <div>
+                  <div class="reel-card-top">
+                    <span class="reel-number-tag">Reel ${r.num < 10 ? '0' + r.num : r.num} • ${r.dayName}</span>
+                    <span class="rubric-tag ${r.rubricKey}">${r.rubricName}</span>
+                  </div>
+                  <div class="reel-theme">${r.title}</div>
+                  <div class="reel-hook">${r.hook}</div>
+                </div>
+                <div>
+                  <div class="reel-meta">
+                    <label class="reel-checkbox-label">
+                      <input type="checkbox" ${completedReels.includes(r.num) ? 'checked' : ''} onchange="toggleReel(${r.num})">
+                      ${completedReels.includes(r.num) ? 'Опубліковано' : 'Не знято'}
+                    </label>
+                    <button class="btn-view-script" onclick="openScriptModal(${r.num})">Сценарій ➔</button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(weekBlock);
+      });
+    }
+
+    function toggleReel(num) {
+      if (completedReels.includes(num)) {
+        completedReels = completedReels.filter(n => n !== num);
+      } else {
+        completedReels.push(num);
+      }
+      localStorage.setItem('vp_completed_reels', JSON.stringify(completedReels));
+      updateStats();
+      renderReelsGrid();
+    }
+
+    function updateStats() {
+      const completed = completedReels.length;
+      document.getElementById('completed-reels-count').innerText = completed;
+      document.getElementById('remaining-reels-count').innerText = 16 - completed;
+      const pct = (completed / 16) * 100;
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    let currentFilter = 'all';
+    function filterReels(type, elem) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      elem.classList.add('active');
+      renderReelsGrid(type, document.getElementById('reels-search').value);
+    }
+
+    function searchReels() {
+      const q = document.getElementById('reels-search').value;
+      renderReelsGrid(currentFilter, q);
+    }
+
+    // OPEN RICH SCRIPT MODAL
+    function openScriptModal(num) {
+      const item = reelsPlan.find(r => r.num === num);
+      if (!item) return;
+
+      let bodyHtml = `
+        <p><strong>📂 Рубрика:</strong> ${item.rubricName} &nbsp;|&nbsp; <strong>🎯 Задача:</strong> ${item.task}</p>
+        <h4>🎣 Головний Hook:</h4>
+        <div class="voiceover-box">${item.hook}</div>
+
+        <h4>🎙️ Текст озвучки (Транскрипція):</h4>
+        <div class="voiceover-box" style="white-space: pre-wrap;">${item.transcript}</div>
+
+        <h4>🎬 Розкадровка та візуальний план:</h4>
+        <table class="storyboard-table">
+          <thead>
+            <tr>
+              <th>Таймінг</th>
+              <th>Текст / Дія</th>
+              <th>Кадр / Візуал</th>
+              <th>Монтаж / Графіка</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${item.table.map(row => `
+              <tr>
+                <td><strong>${row.time}</strong></td>
+                <td style="color: #f1f5f9; font-weight: 600;">${row.action}</td>
+                <td>${row.visual}</td>
+                <td><code style="background: rgba(255,255,255,0.05); padding: 2px 5px; border-radius: 4px;">${row.edit}</code></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <h4>🎭 Стиль зйомки:</h4>
+        <p style="font-size: 0.85rem; color: #94a3b8;">${item.style}</p>
+
+        <h4>📢 Заклик до дії (CTA):</h4>
+        <p style="margin-top: 6px;"><code>${item.cta}</code></p>
+      `;
+
+      document.getElementById('modal-title').innerHTML = `REEL ${item.num < 10 ? '0' + item.num : item.num} — ${item.title}`;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      document.getElementById('script-modal').classList.add('open');
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== document.getElementById('script-modal') && !e.target.classList.contains('modal-close-btn')) return;
+      document.getElementById('script-modal').classList.remove('open');
+    }
+
+    // RENDER STORIES SCHEDULE
+    function renderStoriesSchedule() {
+      const container = document.getElementById('stories-grid');
+      container.innerHTML = storiesSchedule.map(s => `
+        <div class="story-day-card">
+          <div>
+            <div class="story-day-header">
+              <span class="story-day-title">${s.day}</span>
+              <span class="story-day-focus">${s.count}</span>
+            </div>
+            <p style="font-size: 0.85rem; font-weight: 600; color: #f1f5f9; margin-bottom: 8px;">Фокус: ${s.focus}</p>
+            <div class="story-structure-box">${s.structure}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // WORK KANBAN
+    function renderWorkTasks() {
+      const cols = {
+        todo: document.getElementById('col-todo'),
+        inprogress: document.getElementById('col-inprogress'),
+        review: document.getElementById('col-review'),
+        done: document.getElementById('col-done')
+      };
+
+      Object.values(cols).forEach(c => c.innerHTML = '');
+      const counts = { todo: 0, inprogress: 0, review: 0, done: 0 };
+
+      workTasks.forEach(task => {
+        counts[task.status] = (counts[task.status] || 0) + 1;
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+          <div class="task-card-title">${task.title}</div>
+          <div class="task-card-desc">${task.desc}</div>
+          <div class="task-tags">
+            <span class="task-tag">${task.tag}</span>
+          </div>
+          <div class="task-footer">
+            <div class="task-actions">
+              ${task.status !== 'todo' ? `<button class="task-btn-move" onclick="moveTask(${task.id}, 'prev')">◀</button>` : ''}
+              ${task.status !== 'done' ? `<button class="task-btn-move" onclick="moveTask(${task.id}, 'next')">▶</button>` : ''}
+              <button class="task-btn-move" style="color: #ef4444;" onclick="deleteTask(${task.id})">✕</button>
+            </div>
+          </div>
+        `;
+        if (cols[task.status]) cols[task.status].appendChild(card);
+      });
+
+      document.getElementById('count-todo').innerText = counts.todo;
+      document.getElementById('count-inprogress').innerText = counts.inprogress;
+      document.getElementById('count-review').innerText = counts.review;
+      document.getElementById('count-done').innerText = counts.done;
+      document.getElementById('active-tasks-count').innerText = counts.inprogress + counts.review;
+    }
+
+    const statusFlow = ['todo', 'inprogress', 'review', 'done'];
+
+    function moveTask(id, dir) {
+      const task = workTasks.find(t => t.id === id);
+      if (!task) return;
+      const idx = statusFlow.indexOf(task.status);
+      if (dir === 'next' && idx < statusFlow.length - 1) task.status = statusFlow[idx + 1];
+      if (dir === 'prev' && idx > 0) task.status = statusFlow[idx - 1];
+      localStorage.setItem('vp_work_tasks_v2', JSON.stringify(workTasks));
+      renderWorkTasks();
+    }
+
+    function deleteTask(id) {
+      workTasks = workTasks.filter(t => t.id !== id);
+      localStorage.setItem('vp_work_tasks_v2', JSON.stringify(workTasks));
+      renderWorkTasks();
+    }
+
+    function openAddTaskModal() {
+      document.getElementById('add-task-modal').classList.add('open');
+    }
+
+    function closeAddTaskModal(e) {
+      document.getElementById('add-task-modal').classList.remove('open');
+    }
+
+    function saveNewTask() {
+      const title = document.getElementById('new-task-title').value.trim();
+      const desc = document.getElementById('new-task-desc').value.trim();
+      const tag = document.getElementById('new-task-tag').value.trim() || 'Дизайн';
+
+      if (!title) return alert('Будь ласка, введіть назву завдання');
+
+      workTasks.push({
+        id: Date.now(),
+        title,
+        desc,
+        tag,
+        status: 'todo'
+      });
+
+      localStorage.setItem('vp_work_tasks_v2', JSON.stringify(workTasks));
+      renderWorkTasks();
+      closeAddTaskModal(null);
+      document.getElementById('new-task-title').value = '';
+      document.getElementById('new-task-desc').value = '';
+    }
+
+    function loadQuickNotes() {
+      const notes = localStorage.getItem('vp_quick_notes_v2');
+      if (notes) document.getElementById('quick-notes').value = notes;
+    }
+
+    function saveQuickNotes() {
+      const val = document.getElementById('quick-notes').value;
+      localStorage.setItem('vp_quick_notes_v2', val);
+    }
+  </script>
+</body>
+</html>
