@@ -1143,7 +1143,7 @@ button {
     justify-content: center;
 }
 
-.teo-quote-card {
+.ai-quote-card {
     background: rgba(229, 128, 19, 0.1);
     border: 1.5px solid rgba(229, 128, 19, 0.35);
     border-radius: 20px;
@@ -1153,7 +1153,7 @@ button {
     width: 100%;
 }
 
-.teo-avatar-badge {
+.ai-quote-badge {
     display: inline-block;
     background: var(--color-accent);
     color: #FFFFFF;
@@ -1165,7 +1165,7 @@ button {
     margin-bottom: 10px;
 }
 
-.teo-quote-text {
+.ai-quote-text {
     font-family: var(--font-body);
     font-size: clamp(0.92rem, 1.4vw, 1.05rem);
     color: var(--color-text);
@@ -1244,7 +1244,7 @@ button {
     line-height: 1.65;
 }
 
-.about-teo-tag {
+.about-ai-tag {
     display: flex;
     align-items: flex-start;
     gap: clamp(10px, 2vw, 14px);
@@ -1257,13 +1257,13 @@ button {
     color: var(--color-text);
 }
 
-.about-teo-tag .paw {
+.about-ai-tag .paw {
     font-size: 1.4rem;
     flex-shrink: 0;
     margin-top: 2px;
 }
 
-.about-teo-tag strong {
+.about-ai-tag strong {
     display: block;
     font-family: var(--font-heading);
     font-size: clamp(0.88rem, 1.2vw, 0.95rem);
@@ -1559,7 +1559,7 @@ button {
     box-shadow: 0 12px 30px var(--color-accent-glow);
 }
 
-.form-teo-note {
+.form-ai-note {
     font-family: var(--font-body);
     font-size: 0.85rem;
     color: var(--color-text-muted);
@@ -2267,7 +2267,7 @@ button {
         border-radius: 12px;
     }
 
-    .about-teo-tag {
+    .about-ai-tag {
         padding: 14px 16px;
         border-radius: 14px;
     }
